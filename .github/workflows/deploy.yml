@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Portfolio
 
 on:
   push:
@@ -9,27 +9,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          cd portfolio
+          cd portfolio/src
           npm install
 
-      - name: Build Project
+      - name: Build project
         run: |
-          cd portfolio
+          cd portfolio/src
           npm run build
+
+      - name: Copy to docs
+        run: |
+          cp -r portfolio/src/dist/* docs/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./portfolio/dist
-          cname: resume
+          publish_dir: ./docs
+          publish_branch: gh-pages
