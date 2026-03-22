@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OBSIDIAN_ARCHITECT // CI/CD TELEMETRY</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#000000",
+                        "on-tertiary": "#080079",
+                        "on-error": "#450900",
+                        "error-container": "#b92902",
+                        "surface-variant": "#1e2637",
+                        "secondary-fixed-dim": "#c7d5ee",
+                        "surface-container-highest": "#1e2637",
+                        "background": "#080e1a",
+                        "error-dim": "#d53d18",
+                        "surface-tint": "#ff8d86",
+                        "outline": "#707584",
+                        "surface-bright": "#232c3e",
+                        "surface": "#080e1a",
+                        "error": "#ff7351",
+                        "secondary": "#d5e3fd",
+                        "surface-container-low": "#0d1320",
+                        "inverse-on-surface": "#4f5563",
+                        "on-background": "#e0e5f6",
+                        "inverse-primary": "#ba1b24",
+                        "on-primary-fixed": "#000000",
+                        "on-primary-container": "#4e0006",
+                        "secondary-dim": "#c7d5ee",
+                        "on-tertiary-fixed": "#050061",
+                        "on-surface-variant": "#a6abbb",
+                        "secondary-fixed": "#d5e3fd",
+                        "inverse-surface": "#f9f9ff",
+                        "on-surface": "#e0e5f6",
+                        "primary-fixed": "#ff766f",
+                        "surface-container-high": "#18202f",
+                        "on-secondary-fixed-variant": "#4e5c71",
+                        "on-primary-fixed-variant": "#600009",
+                        "on-secondary-container": "#c3d1ea",
+                        "on-tertiary-fixed-variant": "#1e18b2",
+                        "on-secondary": "#455367",
+                        "on-tertiary-container": "#000000",
+                        "tertiary-dim": "#6063ee",
+                        "secondary-container": "#3a485c",
+                        "primary": "#ff8d86",
+                        "surface-dim": "#080e1a",
+                        "on-secondary-fixed": "#324054",
+                        "tertiary-fixed-dim": "#9699ff",
+                        "surface-container": "#131a28",
+                        "primary-fixed-dim": "#ff5a56",
+                        "tertiary-fixed": "#a6a9ff",
+                        "on-primary": "#65000a",
+                        "tertiary-container": "#7073ff",
+                        "tertiary": "#9093ff",
+                        "primary-dim": "#ff716a",
+                        "primary-container": "#ff766f",
+                        "on-error-container": "#ffd2c8",
+                        "outline-variant": "#424855"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #080e1a;
+            color: #e0e5f6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(30, 38, 55, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .orbit-container {
+            perspective: 1200px;
+        }
+        .radial-glow {
+            background: radial-gradient(circle at center, rgba(255, 141, 134, 0.15) 0%, transparent 70%);
+        }
+        .scan-line {
+            background: linear-gradient(to bottom, transparent 0%, rgba(255, 141, 134, 0.1) 50%, transparent 100%);
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: -100%;
+            animation: scan 4s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        .terminal-scroll::-webkit-scrollbar {
+            width: 2px;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #424855;
+        }
+    </style>
+</head>
+<body class="bg-surface selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Anchor -->
+<nav class="fixed top-0 w-full z-50 bg-[#080e1a]/80 backdrop-blur-xl shadow-[0_0_20px_rgba(255,141,134,0.06)]">
+<div class="flex justify-between items-center px-8 py-4 w-full max-w-none">
+<div class="text-xl font-bold tracking-widest text-[#ff8d86] font-['Space_Grotesk'] uppercase">
+                OBSIDIAN_ARCHITECT
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-[#ff8d86] border-b-2 border-[#ff8d86] pb-1 font-['Space_Grotesk'] tracking-tighter uppercase font-bold" href="#">Pipelines</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-['Space_Grotesk'] tracking-tighter uppercase font-bold" href="#">Infrastructure</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-['Space_Grotesk'] tracking-tighter uppercase font-bold" href="#">Logs</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-['Space_Grotesk'] tracking-tighter uppercase font-bold" href="#">Security</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-[#1e2637]/50 p-2 rounded transition-all cursor-pointer">terminal</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-[#1e2637]/50 p-2 rounded transition-all cursor-pointer">settings</span>
+<button class="bg-primary text-on-primary px-6 py-1.5 rounded-sm font-bold tracking-tighter uppercase active:scale-95 transition-transform">DEPLOY</button>
+</div>
+</div>
+<div class="bg-gradient-to-b from-[#131a28] to-transparent h-px w-full"></div>
+</nav>
+<main class="relative min-h-screen pt-24 overflow-hidden">
+<!-- Background Architectural Elements -->
+<div class="absolute inset-0 z-0 opacity-20">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border border-outline-variant rounded-full opacity-10"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] border border-outline-variant/50 rounded-full border-dashed opacity-20"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-primary/10 rounded-full"></div>
+<div class="absolute top-0 left-0 w-full h-full radial-glow"></div>
+</div>
+<!-- Hero Header -->
+<header class="relative z-10 px-12 pt-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-8">
+<div class="max-w-2xl">
+<span class="font-label text-[0.6875rem] tracking-widest uppercase text-primary mb-4 block">SYSTEM_STATUS: OPERATIONAL</span>
+<h1 class="font-headline text-5xl md:text-7xl font-bold tracking-tighter leading-none mb-6">
+                    PIPELINE<br/><span class="text-on-surface-variant opacity-50">ORCHESTRATION</span>
+</h1>
+<p class="font-body text-on-surface-variant max-w-md leading-relaxed opacity-80">
+                    Real-time telemetry of high-frequency deployment nodes. Autonomous scaling and container integrity verification active across 8 sectors.
+                </p>
+</div>
+<div class="flex flex-col items-end gap-2 text-right">
+<div class="flex gap-4 mb-4">
+<div class="px-4 py-2 bg-surface-container border border-outline-variant/15">
+<div class="font-label text-[0.625rem] text-slate-500 uppercase tracking-widest">Build Success</div>
+<div class="font-headline text-xl font-bold text-tertiary">99.8%</div>
+</div>
+<div class="px-4 py-2 bg-surface-container border border-outline-variant/15">
+<div class="font-label text-[0.625rem] text-slate-500 uppercase tracking-widest">Avg Latency</div>
+<div class="font-headline text-xl font-bold text-primary">24ms</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Orbital Radar System -->
+<section class="relative z-10 w-full min-h-[800px] flex items-center justify-center orbit-container">
+<!-- Central Node -->
+<div class="relative w-64 h-64 rounded-full glass-panel flex flex-col items-center justify-center border border-primary/20 shadow-[0_0_50px_rgba(255,141,134,0.1)] group">
+<div class="scan-line"></div>
+<div class="relative z-10 text-center">
+<span class="material-symbols-outlined text-5xl text-primary animate-pulse mb-2" data-weight="fill">hub</span>
+<div class="font-headline text-2xl font-bold tracking-widest uppercase">CORE</div>
+<div class="font-label text-[0.625rem] text-tertiary tracking-[0.2em] mt-1">SYNCING...</div>
+</div>
+<!-- Interactive Pulse Ring -->
+<div class="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping opacity-20"></div>
+</div>
+<!-- Stage 1: Plan (0 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(0deg) translate(380px) rotate(0deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative group overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-slate-500"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400" data-icon="event_note">event_note</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Plan</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-slate-500">SEC_01</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div class="text-tertiary">&gt; FETCHING_BACKLOG</div>
+<div>&gt; SPRINT_72_ACTIVE</div>
+<div>&gt; CAPACITY_LOAD: 84%</div>
+<div>&gt; TICKET_REF: ARCH-902</div>
+</div>
+</div>
+</div>
+<!-- Stage 2: Code (45 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(45deg) translate(380px) rotate(-45deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Code</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-primary animate-pulse">ACTIVE</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div class="text-primary">&gt; GIT_PUSH_DETECTED</div>
+<div>&gt; USER: dev_alpha_9</div>
+<div>&gt; COMMIT: 7ea2f1c</div>
+<div>&gt; CHANGELOG: api_v2_refactor</div>
+</div>
+</div>
+</div>
+<!-- Stage 3: Build (90 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(90deg) translate(380px) rotate(-90deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="package">package</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Build</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-tertiary">SUCCESS</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div>&gt; RUNNING_DOCKER_BUILD</div>
+<div class="text-tertiary">&gt; LAYERS_CACHED</div>
+<div>&gt; IMAGE_TAG: prod-latest</div>
+<div>&gt; SIZE: 142.4 MB</div>
+</div>
+</div>
+</div>
+<!-- Stage 4: Test (135 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(135deg) translate(380px) rotate(-135deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-container"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-300" data-icon="biotech">biotech</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Test</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-slate-400">EXECUTING</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div>&gt; UNIT_TESTS: 452/452</div>
+<div>&gt; INTEGRATION: PENDING</div>
+<div class="text-primary">&gt; COVERAGE: 94.2%</div>
+<div>&gt; LEAK_CHECK: PASS</div>
+</div>
+</div>
+</div>
+<!-- Stage 5: Release (180 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(180deg) translate(380px) rotate(-180deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="new_releases">new_releases</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Release</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-primary animate-pulse">STAGED</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div>&gt; ARTIFACT_SIGNED</div>
+<div>&gt; VERSION: 4.2.0-STABLE</div>
+<div class="text-tertiary">&gt; CHANGELOG_GEN_OK</div>
+<div>&gt; CDN_UPLOAD: 100%</div>
+</div>
+</div>
+</div>
+<!-- Stage 6: Deploy (225 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(225deg) translate(380px) rotate(-225deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="rocket_launch">rocket_launch</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Deploy</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-tertiary">LIVE</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div>&gt; K8S_ROLLING_UPDATE</div>
+<div>&gt; REPLICAS: 12/12</div>
+<div class="text-tertiary">&gt; HEALTH_CHECK: OK</div>
+<div>&gt; CANARY_WEIGHT: 10%</div>
+</div>
+</div>
+</div>
+<!-- Stage 7: Operate (270 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(270deg) translate(380px) rotate(-270deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-slate-600"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400" data-icon="settings_input_component">settings_input_component</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Operate</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-slate-500">SYNCED</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div>&gt; CONFIG_RELOAD_SUCCESS</div>
+<div>&gt; TRAFFIC_BALANCE: 0.98</div>
+<div>&gt; AUTOSCALE_TRIGGER: LOW</div>
+<div>&gt; DB_CONN: 450 ACTIVE</div>
+</div>
+</div>
+</div>
+<!-- Stage 8: Monitor (315 deg) -->
+<div class="absolute transition-all duration-500 hover:scale-110" style="transform: rotate(315deg) translate(380px) rotate(-315deg);">
+<div class="glass-panel p-5 w-72 border border-outline-variant/15 relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="monitoring">monitoring</span>
+<h3 class="font-headline text-lg font-bold tracking-tight uppercase">Monitor</h3>
+</div>
+<span class="text-[0.625rem] font-mono text-primary animate-pulse">STREAMING</span>
+</div>
+<div class="terminal-scroll h-20 overflow-y-auto font-mono text-[0.625rem] text-slate-400 space-y-1">
+<div>&gt; CPU_LOAD: 12%</div>
+<div class="text-tertiary">&gt; ERR_RATE: 0.00%</div>
+<div>&gt; APDEX_SCORE: 0.99</div>
+<div>&gt; LOG_AGGREGATION: ON</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Activity Stream (Asymmetric Layout) -->
+<aside class="absolute left-12 bottom-24 w-80 z-20 hidden lg:block">
+<div class="glass-panel p-6 border border-outline-variant/15">
+<div class="font-headline text-xs font-bold tracking-widest text-primary uppercase mb-4 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                    Live Data Stream
+                </div>
+<div class="space-y-4">
+<div class="group border-b border-outline-variant/10 pb-3">
+<div class="font-label text-[0.625rem] text-slate-500 mb-1 uppercase tracking-widest">14:02:44 // BUILD_NODE_04</div>
+<div class="font-body text-xs text-on-surface opacity-80 leading-relaxed group-hover:text-primary transition-colors">
+                            Provisioning ephemeral cluster for integration suite. Node verification successful.
+                        </div>
+</div>
+<div class="group border-b border-outline-variant/10 pb-3">
+<div class="font-label text-[0.625rem] text-slate-500 mb-1 uppercase tracking-widest">14:02:12 // SEC_AUDIT</div>
+<div class="font-body text-xs text-on-surface opacity-80 leading-relaxed group-hover:text-tertiary transition-colors">
+                            Automated vulnerability scan complete. No critical vulnerabilities found in container image.
+                        </div>
+</div>
+<div class="group border-b border-outline-variant/10 pb-3">
+<div class="font-label text-[0.625rem] text-slate-500 mb-1 uppercase tracking-widest">14:01:58 // DEPLOY_AGENT</div>
+<div class="font-body text-xs text-on-surface opacity-80 leading-relaxed group-hover:text-primary transition-colors">
+                            Traffic shifting to Canary v4.2.0 starting. Current weight: 10%.
+                        </div>
+</div>
+</div>
+<button class="mt-4 w-full py-2 bg-surface-container-highest font-headline text-[0.6875rem] tracking-widest uppercase hover:bg-primary hover:text-on-primary transition-all">
+                    View Full Audit Log
+                </button>
+</div>
+</aside>
+<!-- Right Side Visualization Data -->
+<aside class="absolute right-12 bottom-24 w-80 z-20 hidden lg:block text-right">
+<div class="glass-panel p-6 border border-outline-variant/15">
+<div class="font-headline text-xs font-bold tracking-widest text-tertiary uppercase mb-4">
+                    System Health Matrix
+                </div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="font-label text-[0.625rem] text-slate-500 tracking-widest uppercase">CPU Compute</span>
+<span class="font-mono text-[0.625rem] text-on-surface">14%</span>
+</div>
+<div class="h-1 bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-tertiary w-[14%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="font-label text-[0.625rem] text-slate-500 tracking-widest uppercase">Memory Utilization</span>
+<span class="font-mono text-[0.625rem] text-on-surface">42%</span>
+</div>
+<div class="h-1 bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary w-[42%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="font-label text-[0.625rem] text-slate-500 tracking-widest uppercase">Network I/O</span>
+<span class="font-mono text-[0.625rem] text-on-surface">6.4 GB/s</span>
+</div>
+<div class="h-1 bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-slate-400 w-[68%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-3 text-center border border-outline-variant/10">
+<div class="text-[0.5rem] uppercase text-slate-500 tracking-widest mb-1">Uptime</div>
+<div class="font-headline text-sm font-bold">99.999%</div>
+</div>
+<div class="bg-surface-container p-3 text-center border border-outline-variant/10">
+<div class="text-[0.5rem] uppercase text-slate-500 tracking-widest mb-1">Nodes</div>
+<div class="font-headline text-sm font-bold">1,248</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- Footer Anchor -->
+<footer class="bg-[#080e1a] w-full py-12 border-t border-[#424855]/15 relative z-30 mt-12">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 gap-6 w-full">
+<div class="text-xs font-mono text-[#ff8d86] tracking-tighter">
+                © 2024 SYSTEM_ARCHITECT // BUILD_SUCCESSFUL
+            </div>
+<div class="flex gap-12">
+<a class="font-['Inter'] text-[0.6875rem] tracking-widest uppercase text-slate-600 hover:text-[#ff8d86] transition-colors" href="#">Status</a>
+<a class="font-['Inter'] text-[0.6875rem] tracking-widest uppercase text-slate-600 hover:text-[#ff8d86] transition-colors" href="#">Documentation</a>
+<a class="font-['Inter'] text-[0.6875rem] tracking-widest uppercase text-slate-600 hover:text-[#ff8d86] transition-colors" href="#">API</a>
+<a class="font-['Inter'] text-[0.6875rem] tracking-widest uppercase text-slate-600 hover:text-[#ff8d86] transition-colors" href="#">Privacy</a>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-slate-600 hover:text-primary cursor-pointer transition-colors" style="font-size: 1.25rem;">terminal</span>
+<span class="material-symbols-outlined text-slate-600 hover:text-primary cursor-pointer transition-colors" style="font-size: 1.25rem;">database</span>
+<span class="material-symbols-outlined text-slate-600 hover:text-primary cursor-pointer transition-colors" style="font-size: 1.25rem;">cloud</span>
+</div>
+</div>
+</footer>
+</body></html>
