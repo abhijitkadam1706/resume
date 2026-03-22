@@ -1,110 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Code, Box, TestTube, ShieldCheck, Rocket } from 'lucide-react';
-import { springConfig } from '../motion/animations';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { panelReveal } from "../motion/animations";
 
-const STAGES = [
-  { id: 'code', label: 'Source', icon: Code },
-  { id: 'build', label: 'Build', icon: Box },
-  { id: 'test', label: 'Test', icon: TestTube },
-  { id: 'scan', label: 'Security', icon: ShieldCheck },
-  { id: 'deploy', label: 'Deploy', icon: Rocket }
-];
+const MotionDiv = motion.div;
 
-const PipelineEngine = () => {
-  const [activeStage, setActiveStage] = useState(-1);
-  const [status, setStatus] = useState('idle'); // idle, running, success, failed
+const PipelineEngine = ({ stages }) => {
+  const [activeStage, setActiveStage] = useState(0);
+  const [status, setStatus] = useState("running");
 
   useEffect(() => {
-    let timeout;
-    const runPipeline = () => {
-      setStatus('running');
-      setActiveStage(0);
+    let timeoutId;
 
-      const traverse = (stage) => {
-        if (stage >= STAGES.length) {
-          setStatus('success');
-          timeout = setTimeout(runPipeline, 4000); // Restart pipeline loop
-          return;
-        }
-        
-        setActiveStage(stage);
-        
-        // Simulating realistic failure rates in Security and Test
-        if ((stage === 3 || stage === 2) && Math.random() > 0.85) {
-            setStatus('failed');
-            timeout = setTimeout(runPipeline, 4000);
-            return;
-        }
+    const runStage = (index) => {
+      setActiveStage(index);
 
-        // Simulate duration of stage processing
-        timeout = setTimeout(() => traverse(stage + 1), Math.random() * 800 + 1000);
-      };
+      if (index === stages.length - 1) {
+        setStatus("stable");
+        timeoutId = setTimeout(() => {
+          setStatus("running");
+          runStage(0);
+        }, 2400);
+        return;
+      }
 
-      traverse(0);
+      timeoutId = setTimeout(() => runStage(index + 1), 1200);
     };
 
-    timeout = setTimeout(runPipeline, 1500); // initial start
-    return () => clearTimeout(timeout);
-  }, []);
+    timeoutId = setTimeout(() => runStage(0), 1200);
+    return () => clearTimeout(timeoutId);
+  }, [stages]);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ ...springConfig, delay: 0.5 }}
-      className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-40 bg-[#080e1a]/80 backdrop-blur-xl border border-[#424855]/40 rounded-xl p-6 shadow-[0_15px_60px_rgba(0,0,0,0.5)] hidden lg:block w-[600px] pointer-events-auto hover:border-[#ff8d86]/50 transition-colors"
+    <MotionDiv
+      variants={panelReveal}
+      initial="hidden"
+      animate="visible"
+      className="pointer-events-none absolute bottom-10 right-5 hidden w-[580px] 2xl:block"
     >
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[#e0e5f6] font-mono text-xs uppercase tracking-widest font-bold flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${status === 'running' ? 'bg-[#ffbd2e] animate-pulse' : status === 'success' ? 'bg-[#27c93f]' : status === 'failed' ? 'bg-[#ff5f56]' : 'bg-[#424855]'}`}></span>
-          CI/CD Pipeline Engine
-        </h3>
-        <span className="text-[10px] text-[#a6abbb] font-mono tracking-widest">{status.toUpperCase()}</span>
+      <div className="rounded-2xl border border-white/10 bg-[#09101d]/72 px-6 py-5 shadow-[0_24px_80px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+        <div className="mb-5 flex items-center justify-between">
+          <div className="text-[0.7rem] uppercase tracking-[0.28em] text-[#d4daee]">
+            Delivery pipeline
+          </div>
+          <div className="text-[0.62rem] uppercase tracking-[0.24em] text-[#8e98b3]">
+            {status}
+          </div>
+        </div>
+
+        <div className="relative flex items-start justify-between gap-4">
+          <div className="absolute left-4 right-4 top-4 h-px bg-white/10" />
+          <div
+            className="absolute left-4 top-4 h-px bg-gradient-to-r from-[#9093ff] to-[#ff8d86] transition-all duration-700"
+            style={{
+              width: `${(activeStage / Math.max(stages.length - 1, 1)) * 100}%`,
+            }}
+          />
+
+          {stages.map((stage, index) => {
+            const isActive = index === activeStage;
+            const isComplete = index < activeStage || status === "stable";
+
+            return (
+              <div key={stage.id} className="relative z-10 flex flex-1 flex-col items-center gap-3">
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full border text-[0.68rem] font-semibold transition-all ${
+                    isComplete
+                      ? "border-[#27c93f] bg-[#27c93f] text-[#07110a]"
+                      : isActive
+                        ? "border-[#ff8d86] bg-[#111927] text-[#ffb8b2] shadow-[0_0_24px_rgba(255,141,134,0.35)]"
+                        : "border-white/15 bg-[#111927] text-[#8e98b3]"
+                  }`}
+                >
+                  {index + 1}
+                </div>
+                <div
+                  className={`text-[0.62rem] uppercase tracking-[0.22em] ${
+                    isActive ? "text-[#ffb8b2]" : isComplete ? "text-[#d4daee]" : "text-[#8e98b3]"
+                  }`}
+                >
+                  {stage.label}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-
-      <div className="flex items-center justify-between relative px-2">
-        {/* Background inactive track */}
-        <div className="absolute top-[18px] left-8 right-8 h-0.5 bg-[#1e2637] -z-10 rounded-full"></div>
-        
-        {/* Animated Active track */}
-        <div 
-          className="absolute top-[18px] left-8 h-0.5 bg-gradient-to-r from-[#9093ff] to-[#ff8d86] -z-10 rounded-full transition-all duration-[1000ms] ease-in-out" 
-          style={{ width: `calc(${Math.max(0, activeStage) / (STAGES.length - 1)} * (100% - 4rem))` }}
-        />
-
-        {STAGES.map((stage, i) => {
-          const isActive = i === activeStage;
-          const isPassed = i < activeStage || status === 'success';
-          const isFailed = i === activeStage && status === 'failed';
-          const Icon = stage.icon;
-
-          return (
-            <div key={stage.id} className="flex flex-col items-center gap-3 relative">
-              <motion.div 
-                animate={{ 
-                  scale: isActive ? 1.2 : 1,
-                  backgroundColor: isFailed ? '#ff5f56' : isPassed ? '#27c93f' : isActive ? '#080e1a' : '#080e1a',
-                  borderColor: isFailed ? '#ff5f56' : isPassed ? '#27c93f' : isActive ? '#ff8d86' : '#424855',
-                  boxShadow: isActive ? '0 0 20px rgba(255,141,134,0.4)' : isPassed ? '0 0 15px rgba(39,201,63,0.3)' : 'none'
-                }}
-                className={`w-9 h-9 rounded-full border-2 flex items-center justify-center relative z-10 transition-colors duration-300 bg-[#080e1a]`}
-              >
-                <Icon size={14} className={isActive ? 'text-[#ff8d86]' : isPassed || isFailed ? 'text-[#080e1a]' : 'text-[#a6abbb]'} />
-                
-                {isActive && status === 'running' && (
-                  <span className="absolute inset-0 rounded-full border-2 border-[#ff8d86] animate-ping opacity-75"></span>
-                )}
-              </motion.div>
-              
-              <span className={`text-[9px] uppercase tracking-wider font-mono ${isActive ? 'text-[#ff8d86] font-bold' : isPassed ? 'text-[#27c93f]' : 'text-[#a6abbb]'}`}>
-                {stage.label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </motion.div>
+    </MotionDiv>
   );
 };
 

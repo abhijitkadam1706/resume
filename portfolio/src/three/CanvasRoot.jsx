@@ -1,59 +1,57 @@
-import React, { Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Preload } from '@react-three/drei';
-import ParticleBackground from './ParticleBackground';
-import ClusterVisualizer from './ClusterVisualizer';
-import * as THREE from 'three';
+import { Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Preload } from "@react-three/drei";
+import * as THREE from "three";
+import useViewportMode from "../hooks/useViewportMode";
+import ClusterVisualizer from "./ClusterVisualizer";
+import ParticleBackground from "./ParticleBackground";
 
-// CameraRig provides smooth parallax and floating motion based on the pointer
-const CameraRig = () => {
-  const vec = new THREE.Vector3();
+const CameraRig = ({ reducedMotion }) => {
+  const target = new THREE.Vector3();
+
   useFrame((state) => {
     const time = state.clock.elapsedTime;
-    
-    // Smooth camera floating motion
-    const floatX = Math.sin(time * 0.3) * 0.5;
-    const floatY = Math.sin(time * 0.4) * 0.5;
-    
-    // Parallax tracking using pointer (normalized -1 to 1)
-    const targetX = state.pointer.x * 2 + floatX;
-    const targetY = state.pointer.y * 2 + floatY;
+    const pointerStrength = reducedMotion ? 0.3 : 1.2;
+    const floatStrength = reducedMotion ? 0.08 : 0.42;
+    const targetX = state.pointer.x * pointerStrength + Math.sin(time * 0.24) * floatStrength;
+    const targetY = state.pointer.y * pointerStrength + Math.cos(time * 0.18) * floatStrength;
+    const targetZ = reducedMotion ? 14.5 : 13.8;
 
-    // Linearly interpolate current camera to target position for physics dampening
-    state.camera.position.lerp(vec.set(targetX, targetY, 15), 0.05);
+    state.camera.position.lerp(target.set(targetX, targetY, targetZ), reducedMotion ? 0.08 : 0.05);
     state.camera.lookAt(0, 0, 0);
   });
-  return null;
-}
 
-const CanvasRoot = () => {
+  return null;
+};
+
+const CanvasRoot = ({ clusterProfile }) => {
+  const { isMobile, isTablet, prefersReducedMotion } = useViewportMode();
+
+  const particleCount = prefersReducedMotion ? 600 : isMobile ? 900 : isTablet ? 1500 : 2200;
+  const nodeCount = prefersReducedMotion ? 18 : isMobile ? 22 : isTablet ? 28 : clusterProfile.totalNodes;
+  const clusterOffset = isTablet ? [0, 0.6, 0] : [4.9, 0.15, 0];
+
   return (
-    <div className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-[#080e1a]">
-      <Canvas 
-        camera={{ position: [0, 0, 15], fov: 45 }}
-        dpr={[1, 2]} // Optimize performance by clamping pixel ratio (max 2)
+    <div className="pointer-events-none fixed inset-0 z-0 bg-[#080e1a]">
+      <Canvas
+        camera={{ position: [0, 0, 14], fov: 46 }}
+        dpr={isMobile ? 1 : [1, 1.75]}
         gl={{ alpha: false, antialias: false, powerPreference: "high-performance" }}
       >
-        <color attach="background" args={['#080e1a']} />
-        
-        {/* Cinematic lighting to match the Obsidian Forge theme */}
-        <ambientLight intensity={0.15} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#ff8d86" />
-        <pointLight position={[-10, -20, -10]} intensity={1} color="#9093ff" />
-        <directionalLight position={[0, -5, 10]} intensity={0.5} color="#424855" />
+        <color attach="background" args={["#080e1a"]} />
+        <ambientLight intensity={0.25} />
+        <pointLight position={[8, 10, 8]} intensity={1.1} color="#ff8d86" />
+        <pointLight position={[-8, -8, 6]} intensity={0.8} color="#9093ff" />
 
-        <CameraRig />
+        <CameraRig reducedMotion={prefersReducedMotion} />
 
         <Suspense fallback={null}>
-          <ParticleBackground count={3000} />
-          
-          {/* Render large cluster on the right side of the screen like the original Hero node */}
-          <group position={[5, 0, 0]}>
-            <ClusterVisualizer nodeCount={40} />
+          <ParticleBackground count={particleCount} reducedMotion={prefersReducedMotion} />
+          <group position={clusterOffset}>
+            <ClusterVisualizer nodeCount={nodeCount} reducedMotion={prefersReducedMotion} />
           </group>
         </Suspense>
 
-        {/* Preload ensures smooth loading compiled shaders */}
         <Preload all />
       </Canvas>
     </div>

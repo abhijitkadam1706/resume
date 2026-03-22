@@ -1,81 +1,92 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { sectionItem, staggerContainer, viewportOnce } from "../motion/animations";
 
-const Experience = () => {
+const MotionSection = motion.section;
+const MotionDiv = motion.div;
+
+const Experience = ({ entries }) => {
   return (
-    <section id="experience" className="py-24 relative border-t border-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           transition={{ duration: 0.5 }}
+    <MotionSection id="experience" className="border-t border-white/10 px-5 py-24 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <MotionDiv
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 flex items-center">
-            <span className="text-accent mr-3">02.</span> Professional Experience
-            <div className="h-px bg-gray-800 flex-grow ml-6 hidden sm:block"></div>
-          </h2>
-
-          <div className="relative border-l border-gray-800 ml-4 md:ml-8 pl-8 md:pl-12 space-y-16">
-            
-            {/* AWS HPC Cluster Deployment */}
-            <div className="relative">
-              <div className="absolute -left-[41px] md:-left-[57px] top-1 h-5 w-5 rounded-full bg-background border-2 border-accent"></div>
-              
-              <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-4">
-                <h3 className="text-2xl font-bold text-white">Associate DevOps Engineer <span className="text-accent font-medium">@ ASCP GPUonCLOUD Pvt. Ltd.</span></h3>
-                <p className="text-sm text-gray-500 mt-2 md:mt-0 whitespace-nowrap">09/2025 – Present | Pune, India</p>
+          <MotionDiv variants={sectionItem} className="grid gap-12 lg:grid-cols-[0.35fr_1fr]">
+            <div>
+              <div className="text-xs uppercase tracking-[0.34em] text-[#ffb8b2]">
+                Experience
               </div>
-              
-              <div className="mb-10 mt-6">
-                <h4 className="text-sm font-bold text-gray-300 mb-4 tracking-wide uppercase">AWS HPC Cluster Deployment | AWS PCS · Terraform · CloudFormation · SLURM</h4>
-                <ul className="space-y-4 text-gray-400 text-base">
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Architected and deployed a production-grade HPC cluster on AWS using AWS PCS and SLURM across 5 CloudFormation stacks, reducing manual setup time to zero.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Built a modular Terraform IaC project provisioning a Multi-AZ VPC with 6 subnets across 3 Availability Zones, NAT Gateways, and S3 VPC Endpoints.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Engineered auto-scaling compute node groups scaling from 0 to 1,000 nodes based on SLURM job-queue demand, achieving significant cost optimization.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Enforced 3-layer security architecture achieving 100% block rate on unauthorized access attempts via IMDSv2 and tight security groups.</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-sm font-bold text-gray-300 mb-4 tracking-wide uppercase">Infrastructure Automation & Server Operations | Ubuntu · Bash · Prometheus · Grafana</h4>
-                <ul className="space-y-4 text-gray-400 text-base">
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Hardened production Linux server using SSH access controls and Fail2Ban, achieving 100% block rate on automated brute-force attacks within 8 minutes.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Developed a config-driven Bash automation suite managing UFW firewall rules across 14 services including Prometheus, Grafana, Loki, and SSH.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Deployed Samba file server with LVM-provisioned 200 GB storage implementing RBAC principles for internal LAN/Wi-Fi.</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-accent mr-3 mt-1 text-lg">▹</span>
-                    <span>Configured full observability stack with custom dashboards and log pipelines for real-time infrastructure visibility.</span>
-                  </li>
-                </ul>
-              </div>
+              <h2 className="mt-5 text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
+                Operating at the boundary between scale, automation, and runtime trust.
+              </h2>
             </div>
 
-          </div>
-        </motion.div>
+            <div className="space-y-12">
+              {entries.map((entry) => (
+                <div key={`${entry.company}-${entry.role}`} className="border-t border-white/10 pt-8">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                      <div className="text-sm uppercase tracking-[0.26em] text-[#8e98b3]">
+                        {entry.period}
+                      </div>
+                      <h3 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+                        {entry.role}
+                      </h3>
+                      <div className="mt-2 text-lg text-[#c7d0e7]">
+                        {entry.company} / {entry.location}
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                      {entry.impactMetrics.map((metric) => (
+                        <div key={metric.label} className="border-l border-white/10 pl-4">
+                          <div className="text-2xl font-semibold text-white">{metric.value}</div>
+                          <div className="text-xs uppercase tracking-[0.2em] text-[#8e98b3]">
+                            {metric.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-10 space-y-10">
+                    {entry.tracks.map((track) => (
+                      <div
+                        key={track.title}
+                        className="grid gap-5 border-t border-white/10 pt-6 lg:grid-cols-[0.42fr_1fr]"
+                      >
+                        <div>
+                          <div className="text-sm uppercase tracking-[0.2em] text-[#ffb8b2]">
+                            {track.title}
+                          </div>
+                          <div className="mt-3 text-sm leading-7 text-[#7f8aa6]">
+                            {track.stack}
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          {track.bullets.map((bullet) => (
+                            <div
+                              key={bullet}
+                              className="flex gap-4 text-base leading-8 text-[#c7d0e7]"
+                            >
+                              <span className="mt-3 h-1.5 w-1.5 rounded-full bg-[#ff8d86]" />
+                              <span>{bullet}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </MotionDiv>
+        </MotionDiv>
       </div>
-    </section>
+    </MotionSection>
   );
 };
 

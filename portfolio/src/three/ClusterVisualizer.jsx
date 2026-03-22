@@ -1,128 +1,161 @@
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Line } from '@react-three/drei';
-import * as THREE from 'three';
+import { useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Line } from "@react-three/drei";
+import * as THREE from "three";
 
-const ClusterVisualizer = ({ nodeCount = 40 }) => {
-  const meshRef = useRef();
-  const linesGroupRef = useRef();
-  const materialRef = useRef();
-  
-  // Custom colors for CPU vs GPU nodes
-  const COLOR_CPU = '#3b82f6'; // Blue
-  const COLOR_GPU = '#a855f7'; // Purple
+const seededValue = (seed) => {
+  const value = Math.sin(seed * 91.345 + 17.123) * 43758.5453;
+  return value - Math.floor(value);
+};
 
-  const { positions, Object3D_dummy, colors, linePoints } = useMemo(() => {
-    const positions = [];
-    const colors = new Float32Array(nodeCount * 3);
-    const color = new THREE.Color();
-    const Object3D_dummy = new THREE.Object3D();
-    
-    // Generate cluster nodes
-    for (let i = 0; i < nodeCount; i++) {
-      const p = [
-        (Math.random() - 0.5) * 12,
-        (Math.random() - 0.5) * 12,
-        (Math.random() - 0.5) * 8
-      ];
-      positions.push(p);
-      
-      // 70% CPU (Blue), 30% GPU (Purple)
-      const isGPU = Math.random() > 0.7;
-      color.set(isGPU ? COLOR_GPU : COLOR_CPU);
-      color.toArray(colors, i * 3);
-    }
+const buildClusterData = (nodeCount) => {
+  const cpuColor = new THREE.Color("#66a6ff");
+  const gpuColor = new THREE.Color("#9b7bff");
+  const controlColor = new THREE.Color("#ff8d86");
+  const colors = new Float32Array(nodeCount * 3);
+  const nodes = [];
 
-    // Connect nearby nodes to form physical network graph topology
-    const linePoints = [];
-    for (let i = 0; i < nodeCount; i++) {
-      let connections = 0;
-      for (let j = i + 1; j < nodeCount; j++) {
-        const dx = positions[i][0] - positions[j][0];
-        const dy = positions[i][1] - positions[j][1];
-        const dz = positions[i][2] - positions[j][2];
-        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-        // Distance threshold for connections
-        if (dist < 4.5 && connections < 3) {
-          linePoints.push(positions[i], positions[j]);
-          connections++;
-        }
-      }
-    }
+  for (let index = 0; index < nodeCount; index += 1) {
+    const isController = index < 4;
+    const type = isController ? "controller" : index % 5 === 0 ? "gpu" : "cpu";
+    const localIndex = isController ? index : index - 4;
+    const column = (localIndex % 8) - 3.5;
+    const layer = isController ? 0 : Math.floor(localIndex / 8);
+    const x = column * 0.95 + (seededValue(index + 1) - 0.5) * 0.25;
+    const y =
+      (type === "controller" ? 0 : type === "gpu" ? 1.95 : -1.55) +
+      (seededValue(index + 2) - 0.5) * 0.18;
+    const z = (layer - 1.2) * 1.45 + (seededValue(index + 3) - 0.5) * 0.28;
 
-    return { positions, Object3D_dummy, colors, linePoints };
-  }, [nodeCount]);
+    nodes.push({
+      type,
+      position: [x, y, z],
+      phase: seededValue(index + 4) * Math.PI * 2,
+    });
 
-  useFrame((state, delta) => {
-    if (!meshRef.current) return;
-    
-    const time = state.clock.elapsedTime;
-    
-    // Update instances: Pulsing animation and bobbing
-    for (let i = 0; i < nodeCount; i++) {
-      const [x, y, z] = positions[i];
-      // Pulse size based on sin waves avoiding constant re-instantiation
-      const pulse = 1 + Math.sin(time * 3 + i) * 0.2;
-      
-      Object3D_dummy.position.set(x, y + Math.sin(time + i) * 0.4, z);
-      Object3D_dummy.scale.set(pulse, pulse, pulse);
-      Object3D_dummy.rotation.x = time * 0.2;
-      Object3D_dummy.rotation.y = time * 0.2;
-      Object3D_dummy.updateMatrix();
-      
-      meshRef.current.setMatrixAt(i, Object3D_dummy.matrix);
-    }
-    
-    meshRef.current.instanceMatrix.needsUpdate = true;
-    
-    // Rotate the cluster slowly
-    meshRef.current.rotation.y = time * 0.05;
-    if (linesGroupRef.current) {
-      linesGroupRef.current.rotation.y = time * 0.05;
-    }
+    const color = type === "controller" ? controlColor : type === "gpu" ? gpuColor : cpuColor;
+    color.toArray(colors, index * 3);
+  }
 
-    // Animate the dashed lines to simulate data transfer
-    if (linesGroupRef.current && linesGroupRef.current.material) {
-      linesGroupRef.current.material.dashOffset -= delta * 2;
+  const lines = [];
+  const workerNodes = nodes.slice(4);
+  nodes.slice(0, 4).forEach((controller, controllerIndex) => {
+    workerNodes
+      .filter((_, workerIndex) => workerIndex % 4 === controllerIndex)
+      .slice(0, 6)
+      .forEach((worker) => {
+        lines.push([controller.position, worker.position]);
+      });
+  });
+
+  workerNodes.forEach((node, index) => {
+    const nextNode = workerNodes[index + 1];
+    if (nextNode && Math.abs(node.position[1] - nextNode.position[1]) < 0.4) {
+      lines.push([node.position, nextNode.position]);
     }
   });
 
+  const jobPaths = workerNodes.slice(0, 6).map((node, index) => ({
+    start: new THREE.Vector3(...nodes[index % 4].position),
+    end: new THREE.Vector3(...node.position),
+    color: index % 2 === 0 ? "#ff8d86" : "#9093ff",
+    offset: index * 0.16,
+  }));
+
+  return { colors, jobPaths, lines, nodes };
+};
+
+const ClusterVisualizer = ({ nodeCount, reducedMotion }) => {
+  const meshRef = useRef(null);
+  const groupRef = useRef(null);
+  const tracerRefs = useRef([]);
+  const dummy = useRef(new THREE.Object3D());
+  const { colors, jobPaths, lines, nodes } = useMemo(
+    () => buildClusterData(nodeCount),
+    [nodeCount],
+  );
+
+  useFrame((state) => {
+    if (!meshRef.current) {
+      return;
+    }
+
+    const time = state.clock.elapsedTime;
+
+    nodes.forEach((node, index) => {
+      const pulse = reducedMotion ? 1 : 1 + Math.sin(time * 2.2 + node.phase) * 0.12;
+      const bob = reducedMotion ? 0 : Math.sin(time * 1.4 + node.phase) * 0.08;
+      const baseScale = node.type === "controller" ? 1.3 : node.type === "gpu" ? 1.1 : 0.95;
+
+      dummy.current.position.set(
+        node.position[0],
+        node.position[1] + bob,
+        node.position[2],
+      );
+      dummy.current.scale.setScalar(baseScale * pulse);
+      dummy.current.rotation.x = node.type === "controller" ? time * 0.25 : 0;
+      dummy.current.rotation.y = time * 0.18 + node.phase;
+      dummy.current.updateMatrix();
+      meshRef.current.setMatrixAt(index, dummy.current.matrix);
+    });
+
+    meshRef.current.instanceMatrix.needsUpdate = true;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = reducedMotion ? 0.1 : time * 0.08;
+      groupRef.current.rotation.x = reducedMotion ? 0 : Math.sin(time * 0.22) * 0.04;
+    }
+
+    jobPaths.forEach((path, index) => {
+      const tracer = tracerRefs.current[index];
+      if (!tracer) {
+        return;
+      }
+
+      const progress = (time * 0.24 + path.offset) % 1;
+      tracer.position.lerpVectors(path.start, path.end, progress);
+      tracer.scale.setScalar(reducedMotion ? 0.7 : 0.9 + Math.sin(time * 4 + index) * 0.08);
+    });
+  });
+
   return (
-    <group>
-      {/* High-perf rendering of clustered boxes with high emissive glow */}
+    <group ref={groupRef}>
       <instancedMesh ref={meshRef} args={[null, null, nodeCount]}>
-        <boxGeometry args={[0.3, 0.3, 0.3]}>
+        <boxGeometry args={[0.28, 0.28, 0.28]}>
           <instancedBufferAttribute attach="attributes-color" args={[colors, 3]} />
         </boxGeometry>
-        {/* Extreme glow using high emissive intensity */}
-        <meshStandardMaterial 
-          vertexColors 
-          toneMapped={false} 
-          roughness={0.1} 
-          metalness={0.9} 
-          emissiveIntensity={3.0} 
+        <meshStandardMaterial
+          vertexColors
+          roughness={0.18}
+          metalness={0.86}
           emissive="#ffffff"
+          emissiveIntensity={1.35}
+          toneMapped={false}
         />
       </instancedMesh>
-      
-      {/* Render complex animated lines */}
-      {linePoints.length > 0 && (
-        <group>
-          <Line
-            ref={linesGroupRef}
-            points={linePoints}
-            color="#4f4f66"
-            lineWidth={1}
-            transparent
-            opacity={0.4}
-            segments
-            dashed={true}
-            dashScale={10}
-            dashSize={2}
-            dashRatio={0.5}
-          />
-        </group>
-      )}
+
+      {lines.map((line, index) => (
+        <Line
+          key={`line-${index}`}
+          points={line}
+          color={index % 3 === 0 ? "#33415e" : "#283246"}
+          transparent
+          opacity={0.42}
+          lineWidth={0.8}
+        />
+      ))}
+
+      {jobPaths.map((path, index) => (
+        <mesh
+          key={`trace-${path.offset}`}
+          ref={(node) => {
+            tracerRefs.current[index] = node;
+          }}
+        >
+          <sphereGeometry args={[0.08, 10, 10]} />
+          <meshBasicMaterial color={path.color} />
+        </mesh>
+      ))}
     </group>
   );
 };

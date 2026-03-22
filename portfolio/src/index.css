@@ -10,18 +10,51 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--color-background);
     color: #e0e5f6;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at top left, rgba(255, 141, 134, 0.08), transparent 28%),
+      radial-gradient(circle at top right, rgba(144, 147, 255, 0.1), transparent 30%),
+      linear-gradient(180deg, rgba(8, 14, 26, 0.96), rgba(8, 14, 26, 1));
   }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
   }
+
   ::selection {
     background-color: var(--color-accent);
     color: #080e1a;
+  }
+}
+
+@layer utilities {
+  .terminal-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .terminal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .terminal-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 138, 166, 0.35);
+  }
+
+  .terminal-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 184, 178, 0.5);
   }
 }

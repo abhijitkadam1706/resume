@@ -1,96 +1,104 @@
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
-const ParticleBackground = ({ count = 3000 }) => {
-  const meshRef = useRef();
-  
-  // Pre-calculate positions and attributes for performance
-  const [basePositions, scales] = useMemo(() => {
-    const basePositions = new Float32Array(count * 3);
-    const scales = new Float32Array(count);
-    
-    for (let i = 0; i < count; i++) {
-      // Widespread 3D cloud
-      basePositions[i * 3] = (Math.random() - 0.5) * 50; 
-      basePositions[i * 3 + 1] = (Math.random() - 0.5) * 50;
-      basePositions[i * 3 + 2] = (Math.random() - 0.5) * 30 - 10;
-      scales[i] = Math.random();
+const seededValue = (seed) => {
+  const value = Math.sin(seed * 53.137 + 11.63) * 43758.5453;
+  return value - Math.floor(value);
+};
+
+const ParticleBackground = ({ count, reducedMotion }) => {
+  const pointsRef = useRef(null);
+  const rayRef = useMemo(() => new THREE.Vector3(), []);
+  const worldMouseRef = useMemo(() => new THREE.Vector3(), []);
+
+  const { basePositions, positions } = useMemo(() => {
+    const source = new Float32Array(count * 3);
+    const active = new Float32Array(count * 3);
+
+    for (let index = 0; index < count; index += 1) {
+      const offset = index * 3;
+      const x = (seededValue(index + 1) - 0.5) * 48;
+      const y = (seededValue(index + 2) - 0.5) * 38;
+      const z = (seededValue(index + 3) - 0.5) * 28 - 10;
+
+      source[offset] = x;
+      source[offset + 1] = y;
+      source[offset + 2] = z;
+
+      active[offset] = x;
+      active[offset + 1] = y;
+      active[offset + 2] = z;
     }
-    return [basePositions, scales];
+
+    return {
+      basePositions: source,
+      positions: active,
+    };
   }, [count]);
 
-  const vec = new THREE.Vector3();
-
   useFrame((state) => {
-    if (!meshRef.current) return;
-    const time = state.clock.elapsedTime;
-    
-    // Project mouse to a 3D coordinate roughly on the particle plane
-    vec.set(state.pointer.x, state.pointer.y, 0.5);
-    vec.unproject(state.camera);
-    vec.sub(state.camera.position).normalize();
-    const distance = -state.camera.position.z / vec.z;
-    const mousePos = new THREE.Vector3().copy(state.camera.position).add(vec.multiplyScalar(distance));
-
-    const positions = meshRef.current.geometry.attributes.position.array;
-    
-    // Efficiently update 3000 particles in pure JS
-    for (let i = 0; i < count; i++) {
-      const idx = i * 3;
-      const bx = basePositions[idx];
-      const by = basePositions[idx + 1];
-      const bz = basePositions[idx + 2];
-      
-      // Depth movement (Z-axis breathing)
-      const targetZ = bz + Math.sin(time * 0.5 + i) * 2;
-      
-      // Mouse repulsion
-      const dx = bx - mousePos.x;
-      const dy = by - mousePos.y;
-      const distSq = dx * dx + dy * dy;
-      
-      const interactionDist = 5.0;
-      let targetX = bx;
-      let targetY = by;
-      
-      // Check if mouse is near
-      if (distSq < interactionDist * interactionDist) {
-        const dist = Math.sqrt(distSq);
-        const force = (interactionDist - dist) / interactionDist;
-        // Push particle away from mouse
-        targetX += (dx / dist) * force * 3;
-        targetY += (dy / dist) * force * 3;
-      }
-      
-      // Smooth linear interpolation for physics bounce/return
-      positions[idx] += (targetX - positions[idx]) * 0.05;
-      positions[idx + 1] += (targetY - positions[idx + 1]) * 0.05;
-      positions[idx + 2] += (targetZ - positions[idx + 2]) * 0.05;
+    if (!pointsRef.current) {
+      return;
     }
-    
-    meshRef.current.geometry.attributes.position.needsUpdate = true;
-    
-    // Slow aggregate drift
-    meshRef.current.rotation.y = time * 0.02;
-    meshRef.current.rotation.x = time * 0.01;
+
+    const time = state.clock.elapsedTime;
+    const positionArray = pointsRef.current.geometry.attributes.position.array;
+
+    if (!reducedMotion) {
+      rayRef.set(state.pointer.x, state.pointer.y, 0.4);
+      rayRef.unproject(state.camera);
+      rayRef.sub(state.camera.position).normalize();
+      const distance = -state.camera.position.z / rayRef.z;
+      worldMouseRef.copy(state.camera.position).add(rayRef.multiplyScalar(distance));
+    }
+
+    for (let index = 0; index < count; index += 1) {
+      const offset = index * 3;
+      const baseX = basePositions[offset];
+      const baseY = basePositions[offset + 1];
+      const baseZ = basePositions[offset + 2];
+      const drift = reducedMotion ? 0 : Math.sin(time * 0.55 + index * 0.03) * 1.6;
+
+      let targetX = baseX;
+      let targetY = baseY;
+
+      if (!reducedMotion) {
+        const dx = baseX - worldMouseRef.x;
+        const dy = baseY - worldMouseRef.y;
+        const distanceSquared = dx * dx + dy * dy;
+        const interactionRadius = 18;
+
+        if (distanceSquared > 0.001 && distanceSquared < interactionRadius * interactionRadius) {
+          const distance = Math.sqrt(distanceSquared);
+          const force = (interactionRadius - distance) / interactionRadius;
+          targetX += (dx / distance) * force * 2.1;
+          targetY += (dy / distance) * force * 2.1;
+        }
+      }
+
+      positionArray[offset] += (targetX - positionArray[offset]) * 0.045;
+      positionArray[offset + 1] += (targetY - positionArray[offset + 1]) * 0.045;
+      positionArray[offset + 2] += (baseZ + drift - positionArray[offset + 2]) * 0.035;
+    }
+
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    pointsRef.current.rotation.y = reducedMotion ? 0.04 : time * 0.018;
   });
 
   return (
-    <points ref={meshRef}>
+    <points ref={pointsRef}>
       <bufferGeometry>
-        {/* Clone base array so it doesn't statically overwrite the original memo */}
-        <bufferAttribute attach="attributes-position" count={count} array={new Float32Array(basePositions)} itemSize={3} />
-        <bufferAttribute attach="attributes-scale" count={count} array={scales} itemSize={1} />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial 
-        size={0.12} 
-        color="#a6abbb" 
-        sizeAttenuation={true} 
-        transparent 
-        opacity={0.3}
-        blending={THREE.AdditiveBlending}
+      <pointsMaterial
+        size={reducedMotion ? 0.08 : 0.11}
+        color="#a7b1ca"
+        transparent
+        opacity={0.28}
+        sizeAttenuation
         depthWrite={false}
+        blending={THREE.AdditiveBlending}
       />
     </points>
   );

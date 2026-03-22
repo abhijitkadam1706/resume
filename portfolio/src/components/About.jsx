@@ -1,57 +1,82 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import { sectionItem, staggerContainer, viewportOnce } from "../motion/animations";
 
-const About = () => {
-  const skills = [
-    { category: "AWS Cloud Services", items: "EC2, S3, IAM, Lambda, VPC, ELB, Route 53, EBS, SageMaker, EFS, EKS, CloudFormation, PCS" },
-    { category: "Infrastructure as Code (IaC)", items: "Terraform, AWS CloudFormation" },
-    { category: "Containers & Orchestration", items: "Docker, Kubernetes, Amazon EKS, Helm" },
-    { category: "CI/CD & Automation", items: "Jenkins, GitHub Actions, GitOps, Ansible, Bash Scripting, SonarQube, Nexus" },
-    { category: "High Performance Computing", items: "SLURM, Storage Management, AWS PCS" },
-    { category: "Monitoring", items: "Ganglia, Prometheus, Grafana, Nagios, Wireshark" },
-    { category: "Networking", items: "VPC, Subnets, NAT Gateway, Security Groups, OSI and TCP/IP, Routing and Switching" },
-    { category: "Operating Systems", items: "Linux (Ubuntu, CentOS), Windows" }
-  ];
+const MotionSection = motion.section;
+const MotionDiv = motion.div;
+const MotionP = motion.p;
 
+const About = ({ profile, capabilityGroups }) => {
   return (
-    <section id="about" className="py-24 relative border-t border-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+    <MotionSection id="about" className="px-5 py-24 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <MotionDiv
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOnce}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 flex items-center">
-            <span className="text-accent mr-3">01.</span> About Me & Skills
-            <div className="h-px bg-gray-800 flex-grow ml-6 hidden sm:block"></div>
-          </h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div className="text-gray-400 space-y-6 text-lg leading-relaxed">
-              <p>
-                I am an Associate DevOps Engineer passionate about building secure, scalable, and cost-efficient cloud infrastructure. With a strong foundation in Linux server hardening and observability, I specialize in automating complex deployments.
-              </p>
-              <p>
-                My expertise lies at the intersection of High Performance Computing (HPC) and modern cloud-native architectures. Whether it's provisioning a 1,000-node HPC cluster using AWS PCS or building an end-to-end CI/CD pipeline with Jenkins and Kubernetes, I focus on delivering robust and automated solutions.
-              </p>
-              <p>
-                I hold a Post Graduate Diploma in HPC & System Administration from C-DAC Pune and am an AWS Certified Solutions Architect – Associate.
-              </p>
+          <MotionDiv variants={sectionItem} className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+            <div>
+              <div className="text-xs uppercase tracking-[0.34em] text-[#ffb8b2]">
+                Capability map
+              </div>
+              <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
+                Infrastructure discipline, not just tool familiarity.
+              </h2>
+              <MotionP className="mt-7 max-w-3xl text-lg leading-8 text-[#a6b0c8]">
+                {profile.about.lead}
+              </MotionP>
+              <MotionP className="mt-5 max-w-3xl text-base leading-8 text-[#7f8aa6]">
+                {profile.about.detail}
+              </MotionP>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {skills.slice(0, 6).map((skill, index) => (
-                <div key={index} className="bg-gray-900/50 border border-gray-800 p-6 rounded-lg hover:border-accent/50 hover:bg-gray-900 transition-all shadow-sm">
-                  <h3 className="text-white font-medium mb-3 text-sm tracking-wide uppercase">{skill.category}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{skill.items}</p>
-                </div>
-              ))}
+            <div className="border-l border-white/10 pl-0 lg:pl-8">
+              <div className="text-xs uppercase tracking-[0.28em] text-[#8e98b3]">
+                Credentials
+              </div>
+              <div className="mt-5 space-y-4 text-sm leading-7 text-[#d4daee]">
+                {profile.about.credentials.map((credential) => (
+                  <div key={credential} className="border-b border-white/10 pb-4">
+                    {credential}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 text-sm uppercase tracking-[0.2em] text-[#8e98b3]">
+                {profile.availability}
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </MotionDiv>
+
+          <MotionDiv
+            variants={staggerContainer}
+            className="mt-16 grid gap-8 lg:grid-cols-2"
+          >
+            {capabilityGroups.map((group) => (
+              <MotionDiv
+                key={group.title}
+                variants={sectionItem}
+                className="border-t border-white/10 pt-6"
+              >
+                <div className="text-[0.78rem] uppercase tracking-[0.3em] text-[#8e98b3]">
+                  {group.title}
+                </div>
+                <p className="mt-4 max-w-xl text-lg leading-7 text-[#e0e5f6]">
+                  {group.summary}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3 text-sm text-[#9ca8c4]">
+                  {group.items.map((item) => (
+                    <span key={item} className="border-b border-[#3c455d] pb-1">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </MotionDiv>
+            ))}
+          </MotionDiv>
+        </MotionDiv>
       </div>
-    </section>
+    </MotionSection>
   );
 };
 

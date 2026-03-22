@@ -1,112 +1,145 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Cpu, HardDrive, Network } from 'lucide-react';
-import { slideInRight } from '../motion/animations';
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Activity, Cpu, HardDrive, Network } from "lucide-react";
+import { panelReveal, slideInRight } from "../motion/animations";
 
-const LOG_MESSAGES = [
-  "Node ip-10-0-1-15 connected",
-  "Job [HPC-Batch] scheduled",
-  "Deployment [api-v2] successful",
-  "Scaling group to 5 instances",
-  "Health check passed",
-  "Route53 failover active",
-  "Terraform apply completed"
-];
+const MotionDiv = motion.div;
 
-const MetricsDashboard = () => {
-  const [cpu, setCpu] = useState(42);
-  const [memory, setMemory] = useState(68);
-  const [requests, setRequests] = useState(1250);
-  const [network, setNetwork] = useState(450);
-  const [logs, setLogs] = useState([{ id: Date.now(), text: "System initialized" }]);
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+const MetricsDashboard = ({ telemetryConfig }) => {
+  const { initialMetrics, logMessages } = telemetryConfig;
+  const [cpu, setCpu] = useState(initialMetrics.cpu);
+  const [memory, setMemory] = useState(initialMetrics.memory);
+  const [requests, setRequests] = useState(initialMetrics.requests);
+  const [network, setNetwork] = useState(initialMetrics.network);
+  const [logs, setLogs] = useState([
+    { id: "boot-log", text: "Cluster telemetry stream attached." },
+  ]);
+  const logIdRef = useRef(1);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCpu(prev => Math.min(100, Math.max(10, prev + (Math.random() * 20 - 10))));
-      setMemory(prev => Math.min(100, Math.max(30, prev + (Math.random() * 8 - 4))));
-      setRequests(prev => Math.max(100, prev + Math.floor(Math.random() * 400 - 200)));
-      setNetwork(prev => Math.max(50, prev + Math.floor(Math.random() * 100 - 50)));
+    const intervalId = setInterval(() => {
+      setCpu((current) => clamp(current + (Math.random() * 10 - 5), 18, 92));
+      setMemory((current) => clamp(current + (Math.random() * 6 - 3), 34, 88));
+      setRequests((current) => Math.max(320, current + Math.floor(Math.random() * 180 - 90)));
+      setNetwork((current) => Math.max(120, current + Math.floor(Math.random() * 90 - 45)));
 
-      if (Math.random() > 0.6) {
-        const randomLog = LOG_MESSAGES[Math.floor(Math.random() * LOG_MESSAGES.length)];
-        setLogs(prev => {
-          const newLog = { id: Date.now(), text: `[${new Date().toLocaleTimeString('en-US',{hour12:false})}] ${randomLog}` };
-          return [...prev, newLog].slice(-4);
-        });
+      if (Math.random() > 0.45) {
+        const nextLog = logMessages[Math.floor(Math.random() * logMessages.length)];
+        const logId = `log-${logIdRef.current}`;
+        logIdRef.current += 1;
+
+        setLogs((current) =>
+          [...current, { id: logId, text: nextLog }].slice(-5),
+        );
       }
-    }, 1500);
-    return () => clearInterval(interval);
-  }, []);
+    }, 1800);
+
+    return () => clearInterval(intervalId);
+  }, [logMessages]);
 
   return (
-    <motion.div 
+    <MotionDiv
       variants={slideInRight}
       initial="hidden"
       animate="visible"
-      className="absolute top-24 right-6 z-50 w-80 bg-[#080e1a]/80 backdrop-blur-xl border border-[#424855]/40 rounded-xl shadow-[0_15px_60px_rgba(0,0,0,0.5)] overflow-hidden pointer-events-auto hidden md:block"
+      className="pointer-events-none absolute right-5 top-28 hidden w-[320px] xl:block"
     >
-      <div className="bg-[#131a28]/90 px-4 py-3 border-b border-[#424855]/40 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Activity size={16} className="text-[#9093ff]" />
-          <span className="text-[10px] font-bold text-[#e0e5f6] tracking-[0.2em] uppercase">Live Telemetry</span>
-        </div>
-        <div className="flex gap-1 items-center">
-          <span className="text-[9px] text-[#a6abbb] tracking-wider uppercase mr-1">Status</span>
-          <div className="w-2 h-2 rounded-full bg-[#27c93f] animate-pulse"></div>
-        </div>
-      </div>
-
-      <div className="p-5 flex flex-col gap-6">
-        <div className="flex flex-col gap-4">
-          <div>
-            <div className="flex justify-between text-xs text-[#a6abbb] font-mono mb-2">
-              <span className="flex items-center gap-1.5"><Cpu size={14} className="text-[#e0e5f6]"/> CPU Usage</span>
-              <span className="text-[#e0e5f6] font-semibold">{cpu.toFixed(1)}%</span>
-            </div>
-            <div className="w-full h-1.5 bg-[#1e2637] rounded-full overflow-hidden">
-              <motion.div className="h-full bg-gradient-to-r from-[#9093ff] to-[#ff8d86]" animate={{ width: `${cpu}%` }} transition={{ type: "spring", stiffness: 50, damping: 15 }} />
-            </div>
+      <MotionDiv
+        variants={panelReveal}
+        className="overflow-hidden rounded-2xl border border-white/10 bg-[#09101d]/78 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+      >
+        <div className="flex items-center justify-between border-b border-white/10 bg-[#111a2a]/90 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Activity size={15} className="text-[#9093ff]" />
+            <span className="text-[0.68rem] uppercase tracking-[0.28em] text-[#d4daee]">
+              Live telemetry
+            </span>
           </div>
-          <div>
-            <div className="flex justify-between text-xs text-[#a6abbb] font-mono mb-2">
-              <span className="flex items-center gap-1.5"><HardDrive size={14} className="text-[#e0e5f6]"/> Memory</span>
-              <span className="text-[#e0e5f6] font-semibold">{memory.toFixed(1)}%</span>
-            </div>
-            <div className="w-full h-1.5 bg-[#1e2637] rounded-full overflow-hidden">
-              <motion.div className="h-full bg-gradient-to-r from-[#e0e5f6] to-[#9093ff]" animate={{ width: `${memory}%` }} transition={{ type: "spring", stiffness: 50, damping: 15 }} />
-            </div>
+          <div className="flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.24em] text-[#8e98b3]">
+            Healthy
+            <span className="h-2 w-2 rounded-full bg-[#27c93f] animate-pulse" />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#1e2637]/40 rounded-lg p-3 border border-[#424855]/20 hover:border-[#9093ff]/50 transition-colors">
-            <div className="text-[9px] text-[#a6abbb] uppercase tracking-wider mb-1">Req / Sec</div>
-            <motion.div key={requests} initial={{ scale: 1.1, color: '#ff8d86' }} animate={{ scale: 1, color: '#e0e5f6' }} className="font-mono text-xl font-bold">{requests}</motion.div>
-          </div>
-          <div className="bg-[#1e2637]/40 rounded-lg p-3 border border-[#424855]/20 hover:border-[#9093ff]/50 transition-colors">
-            <div className="text-[9px] text-[#a6abbb] uppercase tracking-wider mb-1 flex items-center gap-1"><Network size={10}/> Net I/O</div>
-            <motion.div key={network} initial={{ scale: 1.1, color: '#9093ff' }} animate={{ scale: 1, color: '#e0e5f6' }} className="font-mono text-xl font-bold flex items-baseline gap-1">
-              {network} <span className="text-[10px] text-[#a6abbb] font-normal">MB/s</span>
-            </motion.div>
-          </div>
-        </div>
+        <div className="space-y-6 px-5 py-5">
+          <div className="space-y-4">
+            <div>
+              <div className="mb-2 flex items-center justify-between text-xs text-[#a6b0c8]">
+                <span className="inline-flex items-center gap-2">
+                  <Cpu size={14} />
+                  CPU load
+                </span>
+                <span className="font-mono text-[#e0e5f6]">{cpu.toFixed(1)}%</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-[#192233]">
+                <MotionDiv
+                  animate={{ width: `${cpu}%` }}
+                  transition={{ type: "spring", stiffness: 60, damping: 18 }}
+                  className="h-full bg-gradient-to-r from-[#9093ff] to-[#ff8d86]"
+                />
+              </div>
+            </div>
 
-        <div className="mt-1 border-t border-[#424855]/30 pt-4 relative">
-          <div className="text-[9px] text-[#a6abbb] uppercase tracking-widest mb-3 flex items-center gap-2">
-            Event Stream <div className="h-px bg-[#424855]/50 flex-grow"></div>
+            <div>
+              <div className="mb-2 flex items-center justify-between text-xs text-[#a6b0c8]">
+                <span className="inline-flex items-center gap-2">
+                  <HardDrive size={14} />
+                  Memory
+                </span>
+                <span className="font-mono text-[#e0e5f6]">{memory.toFixed(1)}%</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-[#192233]">
+                <MotionDiv
+                  animate={{ width: `${memory}%` }}
+                  transition={{ type: "spring", stiffness: 60, damping: 18 }}
+                  className="h-full bg-gradient-to-r from-[#d8deef] to-[#9093ff]"
+                />
+              </div>
+            </div>
           </div>
-          <div className="font-mono text-[10px] flex flex-col gap-2 h-[76px] justify-end overflow-hidden">
-            <AnimatePresence initial={false}>
-              {logs.map((log, i) => (
-                <motion.div key={log.id} initial={{ opacity: 0, x: -10, height: 0 }} animate={{ opacity: 1, x: 0, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className={`flex items-start gap-2 ${i === logs.length - 1 ? 'text-[#e0e5f6]' : 'text-[#424855]'}`}>
-                  <span className="text-[#a6abbb] mt-0.5">›</span><span>{log.text}</span>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="border border-white/10 bg-[#111927]/65 p-3">
+              <div className="text-[0.62rem] uppercase tracking-[0.26em] text-[#8e98b3]">
+                Req / sec
+              </div>
+              <div className="mt-3 font-mono text-2xl text-white">{requests}</div>
+            </div>
+            <div className="border border-white/10 bg-[#111927]/65 p-3">
+              <div className="inline-flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.26em] text-[#8e98b3]">
+                <Network size={12} />
+                Net I/O
+              </div>
+              <div className="mt-3 font-mono text-2xl text-white">{network} MB/s</div>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-4">
+            <div className="text-[0.62rem] uppercase tracking-[0.26em] text-[#8e98b3]">
+              Event stream
+            </div>
+            <div className="mt-4 flex h-[104px] flex-col justify-end gap-2 overflow-hidden font-mono text-[0.66rem] leading-5 text-[#cdd6ec]">
+              <AnimatePresence initial={false}>
+                {logs.map((log) => (
+                  <MotionDiv
+                    key={log.id}
+                    initial={{ opacity: 0, x: -12, height: 0 }}
+                    animate={{ opacity: 1, x: 0, height: "auto" }}
+                    exit={{ opacity: 0, x: 12, height: 0 }}
+                    transition={{ type: "spring", stiffness: 180, damping: 22 }}
+                    className="border-b border-white/5 pb-2 last:border-b-0"
+                  >
+                    {log.text}
+                  </MotionDiv>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+      </MotionDiv>
+    </MotionDiv>
   );
 };
 

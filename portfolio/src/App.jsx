@@ -1,70 +1,82 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import CanvasRoot from "./three/CanvasRoot";
-import TerminalEngine from "./modules/TerminalEngine";
-import MetricsDashboard from "./modules/MetricsDashboard";
-import PipelineEngine from "./modules/PipelineEngine";
-import SystemBoot from "./modules/SystemBoot";
-import { fadeIn } from './motion/animations';
-
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import Contact from './components/Contact';
+import { lazy, Suspense, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import About from "./components/About";
+import Experience from "./components/Experience";
+import Projects from "./components/Projects";
+import Contact from "./components/Contact";
+import {
+  bootSequence,
+  capabilityGroups,
+  clusterProfile,
+  experienceEntries,
+  navLinks,
+  pipelineStages,
+  profile,
+  projectStudies,
+  telemetryConfig,
+  terminalScenarios,
+} from "./data/siteData";
+import { fadeIn } from "./motion/animations";
+const MotionDiv = motion.div;
+const CanvasRoot = lazy(() => import("./three/CanvasRoot"));
+const MetricsDashboard = lazy(() => import("./modules/MetricsDashboard"));
+const PipelineEngine = lazy(() => import("./modules/PipelineEngine"));
+const SystemBoot = lazy(() => import("./modules/SystemBoot"));
+const TerminalEngine = lazy(() => import("./modules/TerminalEngine"));
 
 function App() {
   const [bootComplete, setBootComplete] = useState(false);
 
   return (
-    <div className="bg-[#080e1a] min-h-screen relative overflow-x-hidden">
-      {/* 🔮 Boot Sequence */}
+    <div className="relative min-h-screen overflow-x-clip bg-[#080e1a]">
       <AnimatePresence>
-        {!bootComplete && <SystemBoot onComplete={() => setBootComplete(true)} />}
+        {!bootComplete && (
+          <Suspense fallback={null}>
+            <SystemBoot
+              sequence={bootSequence}
+              onComplete={() => setBootComplete(true)}
+            />
+          </Suspense>
+        )}
       </AnimatePresence>
 
-      {/* 🌐 3D Infrastructure Canvas (Runs constantly in background) */}
-      <CanvasRoot />
+      <Suspense fallback={null}>
+        <CanvasRoot clusterProfile={clusterProfile} />
+      </Suspense>
 
-      {/* The main content fades in after boot unlocks */}
       <AnimatePresence>
         {bootComplete && (
-          <motion.div 
+          <MotionDiv
             initial="hidden"
             animate="visible"
             variants={fadeIn}
-            className="relative z-10 w-full min-h-screen text-[#e0e5f6] font-sans selection:bg-[#ff8d86] selection:text-[#080e1a] pointer-events-none"
+            className="relative z-10 min-h-screen text-[#e0e5f6] selection:bg-[#ff8d86] selection:text-[#080e1a]"
           >
-            {/* Global Navbar */}
-            <div className="pointer-events-auto z-50 relative">
-              <Navbar />
-            </div>
+            <Navbar links={navLinks} name={profile.name} />
 
-            {/* Hero Section Container (Relative for HUD placement) */}
-            <div className="relative w-full overflow-hidden">
-              <div className="pointer-events-auto relative z-20">
-                {/* Your Original Hero Content */}
-                <Hero />
+            <main>
+              <div className="relative isolate overflow-hidden">
+                <Hero profile={profile} />
+
+                <Suspense fallback={null}>
+                  <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0 z-30">
+                    <TerminalEngine scenarios={terminalScenarios} />
+                    <MetricsDashboard telemetryConfig={telemetryConfig} />
+                    <PipelineEngine stages={pipelineStages} />
+                  </div>
+                </Suspense>
               </div>
 
-              {/* DevOps Control Systems HUD Overlay inside Hero constraints */}
-              <div className="absolute inset-0 z-30 pointer-events-none">
-                <TerminalEngine />
-                <MetricsDashboard />
-                <PipelineEngine />
+              <div className="relative z-20 border-t border-white/10 bg-[#080e1a]/86 backdrop-blur-xl">
+                <About profile={profile} capabilityGroups={capabilityGroups} />
+                <Experience entries={experienceEntries} />
+                <Projects projects={projectStudies} />
+                <Contact profile={profile} />
               </div>
-            </div>
-
-            {/* Main Portfolio Content Layer (Resumes data visibility) */}
-            <div className="relative z-40 bg-[#080e1a]/90 backdrop-blur-md border-t border-[#424855]/30 pointer-events-auto">
-              <About />
-              <Experience />
-              <Projects />
-              <Contact />
-            </div>
-
-          </motion.div>
+            </main>
+          </MotionDiv>
         )}
       </AnimatePresence>
     </div>
