@@ -26,6 +26,11 @@ const stagesData = [
   { id: "test", label: "Test", icon: FlaskConical, pos: { left: "27.5%", top: "81%" }, offset: 0.875, isDev: true },
 ];
 
+const loopLabels = [
+  { id: "dev", label: "Dev", position: { left: "22.5%", top: "49.5%" } },
+  { id: "ops", label: "Ops", position: { left: "77.5%", top: "49.5%" } },
+];
+
 const MotionDiv = motion.div;
 
 const PipelineEngine = () => {
@@ -109,6 +114,16 @@ const PipelineEngine = () => {
             />
           </svg>
 
+          {loopLabels.map((loop) => (
+            <div
+              key={loop.id}
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 text-[1.4rem] font-semibold tracking-[-0.04em] text-white/95 md:text-[2rem]"
+              style={loop.position}
+            >
+              {loop.label}
+            </div>
+          ))}
+
           {/* Connected Floating Nodes */}
           {stagesData.map((stage) => {
             const Icon = stage.icon;
@@ -130,7 +145,7 @@ const PipelineEngine = () => {
               >
                 {/* Node Glass Pill */}
                 <div
-                  className={`relative flex h-10 w-10 items-center justify-center rounded-[1rem] border backdrop-blur-md transition-all duration-300 md:h-12 md:w-12 ${
+                  className={`relative flex h-9 w-9 items-center justify-center rounded-[1rem] border backdrop-blur-md transition-all duration-300 md:h-11 md:w-11 ${
                     isActive
                       ? (
                           stage.isDev
@@ -145,11 +160,11 @@ const PipelineEngine = () => {
                   }`}
                 >
                   <Icon
-                    className={`w-4 h-4 transition-colors duration-300 ${
+                    className={`h-3.5 w-3.5 transition-colors duration-300 md:h-4 md:w-4 ${
                       isActive
                         ? "text-white"
                         : (stage.isDev ? "text-[#66a6ff]" : "text-[#ff8d86]")
-                    } md:h-[1.15rem] md:w-[1.15rem]`}
+                    }`}
                   />
                 </div>
                 
