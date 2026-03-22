@@ -4,7 +4,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/resume/',
+  base: '/resume/portfolio/',
+  build: {
+    outDir: 'docs',
+  },
   plugins: [
     tailwindcss(),
     react(),
