@@ -3,18 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
-    <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0; }
-        .loading { font-size: 24px; }
-    </style>
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="loading">Loading your portfolio...</div>
-    <script>
-        setTimeout(function() {
-            window.location.href = 'portfolio.html';
-        }, 3000);
-    </script>
+    <header>
+        <h1>My Portfolio</h1>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section id="about">
+        <h2>About Me</h2>
+        <p>Welcome to my portfolio! I am a dedicated professional with a passion for technology and innovation...</p>
+    </section>
+    <section id="experience">
+        <h2>Experience</h2>
+        <ul>
+            <li><strong>Job Title 1</strong> - Company Name (Year - Year)
+                <ul>
+                    <li>Responsibility 1</li>
+                    <li>Responsibility 2</li>
+                </ul>
+            </li>
+            <li><strong>Job Title 2</strong> - Company Name (Year - Year)
+                <ul>
+                    <li>Responsibility 1</li>
+                    <li>Responsibility 2</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+    <section id="contact">
+        <h2>Contact Me</h2>
+        <p>If you would like to get in touch, please email me at <a href="mailto:example@example.com">example@example.com</a>.</p>
+    </section>
+    <footer>
+        <p>© 2026 My Portfolio</p>
+    </footer>
 </body>
 </html>
