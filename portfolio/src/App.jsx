@@ -18,15 +18,15 @@ import {
   telemetryConfig,
   terminalScenarios,
 } from "./data/siteData";
+import { ReactLenis } from "lenis/react";
 import { fadeIn } from "./motion/animations";
+
 const MotionDiv = motion.div;
 const CanvasRoot = lazy(() => import("./three/CanvasRoot"));
 const MetricsDashboard = lazy(() => import("./modules/MetricsDashboard"));
 const PipelineEngine = lazy(() => import("./modules/PipelineEngine"));
 const SystemBoot = lazy(() => import("./modules/SystemBoot"));
 const TerminalEngine = lazy(() => import("./modules/TerminalEngine"));
-
-import { ReactLenis } from 'lenis/react';
 
 function App() {
   const [bootComplete, setBootComplete] = useState(false);

@@ -1,24 +1,32 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  FileCode2, Code2, Hammer, FlaskConical, 
-  Tag, Rocket, Settings2, Activity 
+import {
+  Activity,
+  Code2,
+  FileCode2,
+  FlaskConical,
+  Hammer,
+  Rocket,
+  Settings2,
+  Tag,
 } from "lucide-react";
 
 // DevOps Stages mapped accurately to the SVG Lemniscate of Bernoulli
 const stagesData = [
   // OPS LOOP (Right Side) - Path offset 0.0 to 0.5
   { id: "release", label: "Release", icon: Tag, pos: { left: "57%", top: "42%" }, offset: 0.05, isDev: false },
-  { id: "deploy", label: "Deploy", icon: Rocket, pos: { left: "75.6%", top: "18%" }, offset: 0.125, isDev: false },
-  { id: "operate", label: "Operate", icon: Settings2, pos: { left: "93%", top: "50%" }, offset: 0.250, isDev: false },
-  { id: "monitor", label: "Monitor", icon: Activity, pos: { left: "75.6%", top: "82%" }, offset: 0.375, isDev: false },
+  { id: "deploy", label: "Deploy", icon: Rocket, pos: { left: "72.5%", top: "19%" }, offset: 0.125, isDev: false },
+  { id: "operate", label: "Operate", icon: Settings2, pos: { left: "86%", top: "50%" }, offset: 0.25, isDev: false },
+  { id: "monitor", label: "Monitor", icon: Activity, pos: { left: "72.5%", top: "81%" }, offset: 0.375, isDev: false },
 
   // DEV LOOP (Left Side) - Path offset 0.5 to 1.0
   { id: "plan", label: "Plan", icon: FileCode2, pos: { left: "43%", top: "42%" }, offset: 0.55, isDev: true },
-  { id: "code", label: "Code", icon: Code2, pos: { left: "24.4%", top: "18%" }, offset: 0.625, isDev: true },
-  { id: "build", label: "Build", icon: Hammer, pos: { left: "7%", top: "50%" }, offset: 0.750, isDev: true },
-  { id: "test", label: "Test", icon: FlaskConical, pos: { left: "24.4%", top: "82%" }, offset: 0.875, isDev: true },
+  { id: "code", label: "Code", icon: Code2, pos: { left: "27.5%", top: "19%" }, offset: 0.625, isDev: true },
+  { id: "build", label: "Build", icon: Hammer, pos: { left: "14%", top: "50%" }, offset: 0.75, isDev: true },
+  { id: "test", label: "Test", icon: FlaskConical, pos: { left: "27.5%", top: "81%" }, offset: 0.875, isDev: true },
 ];
+
+const MotionDiv = motion.div;
 
 const PipelineEngine = () => {
   const [progress, setProgress] = useState(0);
@@ -42,17 +50,15 @@ const PipelineEngine = () => {
   const infinityPath = "M0,0 C60,-80 160,-80 160,0 C160,80 60,80 0,0 C-60,-80 -160,-80 -160,0 C-160,80 -60,80 0,0 Z";
 
   return (
-    <motion.div
+    <MotionDiv
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
-      className="w-full flex justify-center py-24 px-4 md:px-8"
+      className="flex w-full items-center justify-center py-4 xl:justify-end"
     >
-      <div className="relative w-full max-w-[1200px] aspect-[2/1] bg-[#080e1a]/40 backdrop-blur-md border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.5)] rounded-3xl flex items-center justify-center p-8">
-        
+      <div className="relative w-full max-w-[46rem] overflow-hidden rounded-[2rem] border border-white/8 bg-[#080e1a]/45 p-5 shadow-[0_0_80px_rgba(0,0,0,0.45)] backdrop-blur-md lg:max-w-[50rem] xl:max-w-[54rem]">
         {/* Core SVG Canvas */}
-        <div className="relative w-full h-full text-center">
-
+        <div className="relative aspect-[2.15/1] w-full text-center">
           <svg
             viewBox="-170 -90 340 180"
             className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-10"
@@ -111,58 +117,66 @@ const PipelineEngine = () => {
             const isActive = Math.abs(progress - stage.offset) < 0.05 || Math.abs(progress - stage.offset + 1) < 0.05 || Math.abs(progress - stage.offset - 1) < 0.05;
             
             return (
-              <motion.div
+              <MotionDiv
                 key={stage.id}
                 initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: isActive ? 1.15 : 1 }}
+                animate={{ opacity: 1, scale: isActive ? 1.12 : 1 }}
                 transition={{ duration: 0.2 }}
                 className="absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group z-20 origin-center"
-                style={{ 
+                style={{
                   left: stage.pos.left, 
-                  top: stage.pos.top 
+                  top: stage.pos.top,
                 }}
               >
                 {/* Node Glass Pill */}
-                <div 
-                  className={`relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-xl border backdrop-blur-md transition-all duration-300 ${
-                    isActive 
-                      ? (stage.isDev 
-                          ? "bg-[#0b162c] border-[#66a6ff] shadow-[0_0_20px_#66a6ff]" 
-                          : "bg-[#2c0b0b] border-[#ff8d86] shadow-[0_0_20px_#ff8d86]")
-                      : (stage.isDev 
-                          ? "bg-[#0b162c]/60 border-[#66a6ff]/20 opacity-60" 
-                          : "bg-[#2c0b0b]/60 border-[#ff8d86]/20 opacity-60")
+                <div
+                  className={`relative flex h-10 w-10 items-center justify-center rounded-[1rem] border backdrop-blur-md transition-all duration-300 md:h-12 md:w-12 ${
+                    isActive
+                      ? (
+                          stage.isDev
+                            ? "bg-[#0b162c] border-[#66a6ff] shadow-[0_0_20px_#66a6ff]"
+                            : "bg-[#2c0b0b] border-[#ff8d86] shadow-[0_0_20px_#ff8d86]"
+                        )
+                      : (
+                          stage.isDev
+                            ? "bg-[#0b162c]/60 border-[#66a6ff]/20 opacity-60"
+                            : "bg-[#2c0b0b]/60 border-[#ff8d86]/20 opacity-60"
+                        )
                   }`}
                 >
-                  <Icon 
+                  <Icon
                     className={`w-4 h-4 transition-colors duration-300 ${
-                      isActive 
-                        ? "#ffffff" 
+                      isActive
+                        ? "text-white"
                         : (stage.isDev ? "text-[#66a6ff]" : "text-[#ff8d86]")
-                    }`} 
+                    } md:h-[1.15rem] md:w-[1.15rem]`}
                   />
                 </div>
                 
                 {/* Node Label Title */}
-                <div 
-                  className={`absolute top-full mt-2 lg:mt-3 px-2 md:px-3 py-0.5 rounded-full text-[0.45rem] md:text-[0.55rem] font-bold uppercase tracking-[0.2em] border backdrop-blur-md transition-all duration-300 ${
+                <div
+                  className={`absolute top-full mt-2.5 px-2.5 py-0.5 rounded-full border text-[0.5rem] font-bold uppercase tracking-[0.2em] backdrop-blur-md transition-all duration-300 md:px-3.5 md:text-[0.6rem] ${
                     isActive
-                      ? (stage.isDev 
-                          ? "bg-[#0b162c] border-[#66a6ff]/50 text-white shadow-[0_0_10px_rgba(102,166,255,0.5)]" 
-                          : "bg-[#2c0b0b] border-[#ff8d86]/50 text-white shadow-[0_0_10px_rgba(255,141,134,0.5)]")
-                      : (stage.isDev 
-                          ? "bg-[#0b162c]/40 border-[#66a6ff]/10 text-[#66a6ff]/70" 
-                          : "bg-[#2c0b0b]/40 border-[#ff8d86]/10 text-[#ff8d86]/70")
+                      ? (
+                          stage.isDev
+                            ? "bg-[#0b162c] border-[#66a6ff]/50 text-white shadow-[0_0_10px_rgba(102,166,255,0.5)]"
+                            : "bg-[#2c0b0b] border-[#ff8d86]/50 text-white shadow-[0_0_10px_rgba(255,141,134,0.5)]"
+                        )
+                      : (
+                          stage.isDev
+                            ? "bg-[#0b162c]/40 border-[#66a6ff]/10 text-[#66a6ff]/70"
+                            : "bg-[#2c0b0b]/40 border-[#ff8d86]/10 text-[#ff8d86]/70"
+                        )
                   }`}
                 >
                   {stage.label}
                 </div>
-              </motion.div>
+              </MotionDiv>
             );
           })}
         </div>
       </div>
-    </motion.div>
+    </MotionDiv>
   );
 };
 

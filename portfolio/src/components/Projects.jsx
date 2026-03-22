@@ -6,7 +6,7 @@ import { sectionItem, staggerContainer, viewportOnce } from "../motion/animation
 const MotionSection = motion.section;
 const MotionDiv = motion.div;
 
-const ProjectCard = ({ project, i, progress, range, targetScale }) => {
+const ProjectCard = ({ project, progress, range, targetScale }) => {
   const containerRef = useRef(null);
   
   // Cinematic scale-down effect
@@ -134,7 +134,6 @@ const Projects = ({ projects }) => {
               return (
                 <ProjectCard
                   key={project.title}
-                  i={i}
                   project={project}
                   progress={scrollYProgress}
                   range={[i * 0.25, 1]}

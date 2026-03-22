@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -26,14 +26,19 @@ const tools = [
 const ToolLogo = ({ url, scale }) => {
   // Use native TextureLoader instead of SVGLoader to avoid gradient parse failures
   const texture = useLoader(THREE.TextureLoader, url);
-  texture.generateMipmaps = true;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  const configuredTexture = useMemo(() => {
+    const nextTexture = texture.clone();
+    nextTexture.generateMipmaps = true;
+    nextTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    nextTexture.needsUpdate = true;
+    return nextTexture;
+  }, [texture]);
   
   return (
     <mesh>
       <planeGeometry args={[scale, scale]} />
       <meshBasicMaterial 
-        map={texture} 
+        map={configuredTexture} 
         transparent={true} 
         opacity={0.15} // Dimmed for cinematic background effect without blocking text
         alphaTest={0.05}

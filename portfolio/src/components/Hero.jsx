@@ -94,9 +94,9 @@ const Hero = ({ profile, terminal, metrics, pipeline }) => {
             </div>
 
             {/* INTEGRATED HUD (Only on large screens to avoid mess) */}
-            <div className="hidden lg:grid grid-cols-1 xl:grid-cols-[1fr_1fr] gap-6 w-full items-start">
-              {terminal}
-              {pipeline}
+            <div className="hidden w-full items-center gap-5 lg:grid lg:grid-cols-1 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] xl:gap-8">
+              <div className="w-full xl:pr-2">{terminal}</div>
+              <div className="flex w-full items-center justify-center xl:justify-end">{pipeline}</div>
             </div>
           </MotionDiv>
 
