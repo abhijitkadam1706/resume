@@ -46,19 +46,23 @@ const PipelineEngine = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
-      className="w-full flex justify-center py-20 px-4 md:px-8"
+      className="w-full flex justify-center py-16 px-4 md:px-8"
     >
-      <div className="relative w-full max-w-[1000px] aspect-[2/1] bg-[#080e1a]/40 backdrop-blur-md rounded-3xl flex items-center justify-center p-8 border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+      <div className="relative w-full max-w-[750px] aspect-[2/1] bg-[#080e1a]/40 backdrop-blur-md border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.5)] rounded-3xl flex items-center justify-center p-8">
         
         {/* Core SVG Canvas */}
         <div className="relative w-full h-full text-center">
           
-          {/* Giant Background Text */}
-          <div className="absolute top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2 font-headline text-5xl md:text-8xl lg:text-[10rem] font-bold text-[#66a6ff]/10 tracking-tighter select-none pointer-events-none z-0">
-            DEV
+          {/* Centered Dev/Ops Typography positioned strictly inside the empty circles */}
+          <div className="absolute top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none flex flex-col items-center justify-center">
+            <span className="font-headline text-3xl md:text-5xl font-black text-white/90 drop-shadow-[0_0_10px_rgba(102,166,255,0.8)] tracking-tight">
+              Dev
+            </span>
           </div>
-          <div className="absolute top-1/2 left-[75%] -translate-x-1/2 -translate-y-1/2 font-headline text-5xl md:text-8xl lg:text-[10rem] font-bold text-[#ff8d86]/10 tracking-tighter select-none pointer-events-none z-0">
-            OPS
+          <div className="absolute top-1/2 left-[75%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none flex flex-col items-center justify-center">
+            <span className="font-headline text-3xl md:text-5xl font-black text-white/90 drop-shadow-[0_0_10px_rgba(255,141,134,0.8)] tracking-tight">
+              Ops
+            </span>
           </div>
 
           <svg
@@ -115,21 +119,21 @@ const PipelineEngine = () => {
           {stagesData.map((stage) => {
             const Icon = stage.icon;
             
-            // Check if the single moving dot is currently crossing this node's offset coordinate (+/- 0.06 variance)
-            const isActive = Math.abs(progress - stage.offset) < 0.06 || Math.abs(progress - stage.offset + 1) < 0.06 || Math.abs(progress - stage.offset - 1) < 0.06;
+            // Check if the single moving dot is currently crossing this node's offset coordinate (+/- 0.05 variance)
+            const isActive = Math.abs(progress - stage.offset) < 0.05 || Math.abs(progress - stage.offset + 1) < 0.05 || Math.abs(progress - stage.offset - 1) < 0.05;
             
             return (
               <motion.div
                 key={stage.id}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: isActive ? 1.15 : 1 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2 }}
                 className="absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group z-20"
                 style={{ left: stage.pos.left, top: stage.pos.top }}
               >
                 {/* Node Glass Pill */}
                 <div 
-                  className={`relative flex items-center justify-center w-10 h-10 md:w-16 md:h-16 rounded-xl md:rounded-2xl border backdrop-blur-md transition-all duration-300 ${
+                  className={`relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl border backdrop-blur-md transition-all duration-300 ${
                     isActive 
                       ? (stage.isDev 
                           ? "bg-[#0b162c] border-[#66a6ff] shadow-[0_0_20px_#66a6ff]" 
@@ -140,18 +144,17 @@ const PipelineEngine = () => {
                   }`}
                 >
                   <Icon 
-                    className={`w-4 h-4 md:w-6 md:h-6 transition-colors duration-300 ${
+                    className={`w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 ${
                       isActive 
                         ? "#ffffff" 
                         : (stage.isDev ? "text-[#66a6ff]" : "text-[#ff8d86]")
                     }`} 
-                    color={isActive ? "#ffffff" : undefined}
                   />
                 </div>
                 
                 {/* Node Label Title */}
                 <div 
-                  className={`absolute top-full mt-2 lg:mt-3 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[0.45rem] md:text-xs font-bold uppercase tracking-[0.2em] border backdrop-blur-md transition-all duration-300 ${
+                  className={`absolute top-full mt-2 lg:mt-3 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[0.45rem] md:text-[0.6rem] font-bold uppercase tracking-[0.2em] border backdrop-blur-md transition-all duration-300 ${
                     isActive
                       ? (stage.isDev 
                           ? "bg-[#0b162c] border-[#66a6ff]/50 text-white shadow-[0_0_10px_rgba(102,166,255,0.5)]" 
