@@ -26,60 +26,61 @@ const PipelineEngine = lazy(() => import("./modules/PipelineEngine"));
 const SystemBoot = lazy(() => import("./modules/SystemBoot"));
 const TerminalEngine = lazy(() => import("./modules/TerminalEngine"));
 
+import { ReactLenis } from 'lenis/react';
+
 function App() {
   const [bootComplete, setBootComplete] = useState(false);
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-[#080e1a]">
-      <AnimatePresence>
-        {!bootComplete && (
-          <Suspense fallback={null}>
-            <SystemBoot
-              sequence={bootSequence}
-              onComplete={() => setBootComplete(true)}
-            />
-          </Suspense>
-        )}
-      </AnimatePresence>
+    <ReactLenis root options={{ lerp: 0.08, duration: 1.5, smoothTouch: true }}>
+      <div className="relative min-h-screen overflow-x-clip bg-[#080e1a]">
+        <AnimatePresence>
+          {!bootComplete && (
+            <Suspense fallback={null}>
+              <SystemBoot
+                sequence={bootSequence}
+                onComplete={() => setBootComplete(true)}
+              />
+            </Suspense>
+          )}
+        </AnimatePresence>
 
-      <Suspense fallback={null}>
-        <CanvasRoot clusterProfile={clusterProfile} />
-      </Suspense>
+        <Suspense fallback={null}>
+          <CanvasRoot clusterProfile={clusterProfile} />
+        </Suspense>
 
-      <AnimatePresence>
-        {bootComplete && (
-          <MotionDiv
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            className="relative z-10 min-h-screen text-[#e0e5f6] selection:bg-[#ff8d86] selection:text-[#080e1a]"
-          >
-            <Navbar links={navLinks} name={profile.name} />
+        <AnimatePresence>
+          {bootComplete && (
+            <MotionDiv
+              initial="hidden"
+              animate="visible"
+              variants={fadeIn}
+              className="relative z-10 min-h-screen text-[#e0e5f6] selection:bg-[#ff8d86] selection:text-[#080e1a]"
+            >
+              <Navbar links={navLinks} name={profile.name} />
 
-            <main>
-              <div className="relative isolate overflow-hidden">
-                <Hero profile={profile} />
+              <main>
+                <div className="relative isolate overflow-hidden">
+                  <Hero 
+                    profile={profile}
+                    terminal={<TerminalEngine scenarios={terminalScenarios} />}
+                    metrics={<MetricsDashboard telemetryConfig={telemetryConfig} />}
+                    pipeline={<PipelineEngine stages={pipelineStages} />}
+                  />
+                </div>
 
-                <Suspense fallback={null}>
-                  <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0 z-30">
-                    <TerminalEngine scenarios={terminalScenarios} />
-                    <MetricsDashboard telemetryConfig={telemetryConfig} />
-                    <PipelineEngine stages={pipelineStages} />
-                  </div>
-                </Suspense>
-              </div>
-
-              <div className="relative z-20 border-t border-white/10 bg-[#080e1a]/86 backdrop-blur-xl">
-                <About profile={profile} capabilityGroups={capabilityGroups} />
-                <Experience entries={experienceEntries} />
-                <Projects projects={projectStudies} />
-                <Contact profile={profile} />
-              </div>
-            </main>
-          </MotionDiv>
-        )}
-      </AnimatePresence>
-    </div>
+                <div className="relative z-20 border-t border-white/10 bg-[#080e1a]/86 backdrop-blur-xl">
+                  <About profile={profile} capabilityGroups={capabilityGroups} />
+                  <Experience entries={experienceEntries} />
+                  <Projects projects={projectStudies} />
+                  <Contact profile={profile} />
+                </div>
+              </main>
+            </MotionDiv>
+          )}
+        </AnimatePresence>
+      </div>
+    </ReactLenis>
   );
 }
 

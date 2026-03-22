@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Activity, Cpu, HardDrive, Network } from "lucide-react";
-import { panelReveal, slideInRight } from "../motion/animations";
+import { slideInRight } from "../motion/animations";
 
 const MotionDiv = motion.div;
 
@@ -44,26 +44,23 @@ const MetricsDashboard = ({ telemetryConfig }) => {
       variants={slideInRight}
       initial="hidden"
       animate="visible"
-      className="pointer-events-none absolute right-5 top-28 hidden w-[320px] xl:block"
+      className="pointer-events-none w-full max-w-[340px]"
     >
-      <MotionDiv
-        variants={panelReveal}
-        className="overflow-hidden rounded-2xl border border-white/10 bg-[#09101d]/78 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl"
-      >
-        <div className="flex items-center justify-between border-b border-white/10 bg-[#111a2a]/90 px-4 py-3">
+      <div className="overflow-hidden rounded-xl border border-white/10 bg-[#09101d]/60 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-md">
+        <div className="flex items-center justify-between border-b border-white/10 bg-[#111a2a]/80 px-4 py-2">
           <div className="flex items-center gap-2">
-            <Activity size={15} className="text-[#9093ff]" />
-            <span className="text-[0.68rem] uppercase tracking-[0.28em] text-[#d4daee]">
+            <Activity size={14} className="text-[#9093ff]" />
+            <span className="text-[0.6rem] uppercase tracking-[0.25em] text-[#d4daee]">
               Live telemetry
             </span>
           </div>
-          <div className="flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.24em] text-[#8e98b3]">
+          <div className="flex items-center gap-1.5 text-[0.6rem] uppercase tracking-[0.2em] text-[#8e98b3]">
             Healthy
-            <span className="h-2 w-2 rounded-full bg-[#27c93f] animate-pulse" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#27c93f] animate-pulse" />
           </div>
         </div>
 
-        <div className="space-y-6 px-5 py-5">
+        <div className="space-y-5 px-4 py-4">
           <div className="space-y-4">
             <div>
               <div className="mb-2 flex items-center justify-between text-xs text-[#a6b0c8]">
@@ -138,7 +135,7 @@ const MetricsDashboard = ({ telemetryConfig }) => {
             </div>
           </div>
         </div>
-      </MotionDiv>
+      </div>
     </MotionDiv>
   );
 };

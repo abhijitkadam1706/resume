@@ -7,7 +7,7 @@ const MotionP = motion.p;
 
 const About = ({ profile, capabilityGroups }) => {
   return (
-    <MotionSection id="about" className="px-5 py-24 sm:px-6 lg:px-8">
+    <MotionSection id="about" className="scroll-mt-24 px-5 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <MotionDiv
           variants={staggerContainer}

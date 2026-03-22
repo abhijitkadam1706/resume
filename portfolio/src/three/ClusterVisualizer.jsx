@@ -1,6 +1,5 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Line } from "@react-three/drei";
 import * as THREE from "three";
 
 const seededValue = (seed) => {
@@ -63,6 +62,22 @@ const buildClusterData = (nodeCount) => {
   }));
 
   return { colors, jobPaths, lines, nodes };
+};
+
+const NetworkLine = ({ points, color, opacity }) => {
+  const positions = useMemo(
+    () => new Float32Array(points.flatMap((point) => point)),
+    [points],
+  );
+
+  return (
+    <line>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <lineBasicMaterial color={color} transparent opacity={opacity} />
+    </line>
+  );
 };
 
 const ClusterVisualizer = ({ nodeCount, reducedMotion }) => {
@@ -135,13 +150,11 @@ const ClusterVisualizer = ({ nodeCount, reducedMotion }) => {
       </instancedMesh>
 
       {lines.map((line, index) => (
-        <Line
+        <NetworkLine
           key={`line-${index}`}
           points={line}
           color={index % 3 === 0 ? "#33415e" : "#283246"}
-          transparent
           opacity={0.42}
-          lineWidth={0.8}
         />
       ))}
 

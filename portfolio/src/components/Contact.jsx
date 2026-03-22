@@ -7,8 +7,8 @@ const MotionDiv = motion.div;
 
 const Contact = ({ profile }) => {
   return (
-    <MotionSection id="contact" className="border-t border-white/10 px-5 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl">
+    <MotionSection id="contact" className="scroll-mt-24 border-t border-white/10 px-5 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         <MotionDiv
           variants={panelReveal}
           initial="hidden"

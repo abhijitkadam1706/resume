@@ -17,17 +17,17 @@ export const profile = {
       {
         value: "0 -> 1000",
         label: "Node scaling",
-        detail: "Elastic AWS PCS compute fleets driven by queue demand.",
+        detail: "Queue-driven AWS PCS capacity.",
       },
       {
         value: "Multi-AZ",
         label: "Infrastructure",
-        detail: "Terraform VPC design with six subnets, endpoints, and layered network controls.",
+        detail: "Terraform VPC with six subnets.",
       },
       {
         value: "24/7",
         label: "Visibility",
-        detail: "Prometheus, Grafana, Loki, and event-driven operating telemetry.",
+        detail: "Prometheus, Grafana, and Loki.",
       },
     ],
     signals: [

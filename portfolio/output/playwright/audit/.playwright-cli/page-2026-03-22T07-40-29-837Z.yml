@@ -1,0 +1,339 @@
+- generic [ref=e7]:
+  - navigation [ref=e8]:
+    - generic [ref=e9]:
+      - link "Abhijit Kadam" [ref=e10] [cursor=pointer]:
+        - /url: "#home"
+      - generic [ref=e11]:
+        - link "Home" [ref=e12] [cursor=pointer]:
+          - /url: "#home"
+        - link "Capabilities" [ref=e13] [cursor=pointer]:
+          - /url: "#about"
+        - link "Experience" [ref=e14] [cursor=pointer]:
+          - /url: "#experience"
+        - link "Case Studies" [ref=e15] [cursor=pointer]:
+          - /url: "#projects"
+        - link "Contact" [ref=e16] [cursor=pointer]:
+          - /url: "#contact"
+        - link "Open Channel" [ref=e17] [cursor=pointer]:
+          - /url: "#contact"
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e24]:
+        - generic [ref=e25]: AWS PCS / Terraform / Kubernetes / Observability
+        - generic [ref=e27]:
+          - generic [ref=e28]: Abhijit
+          - generic [ref=e29]: Kadam
+        - paragraph [ref=e30]: Building elastic infrastructure for HPC, CI/CD, and secure cloud operations.
+        - paragraph [ref=e31]: Associate DevOps Engineer focused on AWS PCS + SLURM, Terraform-driven platform setup, Kubernetes delivery, observability, and Linux hardening for production systems.
+        - generic [ref=e32]:
+          - link "View Case Studies" [ref=e33] [cursor=pointer]:
+            - /url: "#projects"
+          - link "Open Contact Channel" [ref=e34] [cursor=pointer]:
+            - /url: "#contact"
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]: Node scaling
+            - generic [ref=e38]: 0 -> 1000
+            - generic [ref=e39]: Elastic AWS PCS compute fleets driven by queue demand.
+          - generic [ref=e40]:
+            - generic [ref=e41]: Infrastructure
+            - generic [ref=e42]: Multi-AZ
+            - generic [ref=e43]: Terraform VPC design with six subnets, endpoints, and layered network controls.
+          - generic [ref=e44]:
+            - generic [ref=e45]: Visibility
+            - generic [ref=e46]: 24/7
+            - generic [ref=e47]: Prometheus, Grafana, Loki, and event-driven operating telemetry.
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: Runtime shell
+            - generic:
+              - generic: NodeName=gpu-queue-[001-032] State=ALLOCATED Partitions=gpu-queue
+              - generic: NodeName=head-01 State=MIXED Partitions=control
+              - generic: Jobs streaming from queue demand into autoscaling policies.
+              - generic: $ kubectl rollout status deploy/platform-api -n prod
+              - generic: "Waiting for deployment \"platform-api\" rollout to finish: 2 of 3 updated replicas are available..."
+              - generic: deployment "platform-api" successfully rolled out
+              - generic: "Prometheus alert state: healthy"
+              - generic: $ sudo fail2ban-client status sshd
+              - generic: "Status for the jail: sshd"
+              - generic: "|- Filter | Currently failed: 0 | Total failed: 17"
+              - generic: "`- Actions | Currently banned: 3 | Total banned: 11"
+              - generic: $ terraform apply -var-file=prod-hpc.tfvars
+              - generic: "module.network.aws_vpc.main: Modifying... [id=vpc-prod-hpc]"
+              - generic: "module.compute.aws_pcs_cluster.main: Creation complete after 3m 18s"
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+                - generic: Live telemetry
+              - generic: Healthy
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - img
+                      - text: CPU load
+                    - generic: 36.1%
+                - generic:
+                  - generic:
+                    - generic:
+                      - img
+                      - text: Memory
+                    - generic: 66.0%
+              - generic:
+                - generic:
+                  - generic: Req / sec
+                  - generic: "1516"
+                - generic:
+                  - generic:
+                    - img
+                    - text: Net I/O
+                  - generic: 521 MB/s
+              - generic:
+                - generic: Event stream
+                - generic:
+                  - generic: Cluster telemetry stream attached.
+                  - generic: Fail2Ban banned a repeated SSH source after rate spike.
+                  - generic: GPU partition accepted a new training batch request.
+    - generic [ref=e48]:
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: Capability map
+            - heading "Infrastructure discipline, not just tool familiarity." [level=2] [ref=e55]
+            - paragraph [ref=e56]: My work sits at the point where high-performance computing, cloud automation, and operations discipline overlap. I build infrastructure that is meant to scale under real workload pressure, stay observable, and remain secure by default.
+            - paragraph [ref=e57]: "The strongest through-line in my resume is operational trust: provisioning repeatable environments, automating delivery, hardening access paths, and giving teams enough telemetry to act before systems drift."
+          - generic [ref=e58]:
+            - generic [ref=e59]: Credentials
+            - generic [ref=e60]:
+              - generic [ref=e61]: Post Graduate Diploma in HPC & System Administration, C-DAC Pune
+              - generic [ref=e62]: AWS Certified Solutions Architect - Associate
+            - generic [ref=e63]: Open to associate DevOps, cloud platform, and infrastructure engineering roles.
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: Cloud Platform Engineering
+            - paragraph [ref=e67]: Provisioning AWS foundations for resilient workload placement and secure connectivity.
+            - generic [ref=e68]:
+              - generic [ref=e69]: AWS PCS
+              - generic [ref=e70]: EC2
+              - generic [ref=e71]: VPC
+              - generic [ref=e72]: IAM
+              - generic [ref=e73]: Route 53
+              - generic [ref=e74]: S3
+              - generic [ref=e75]: EKS
+              - generic [ref=e76]: EFS
+              - generic [ref=e77]: CloudFormation
+          - generic [ref=e78]:
+            - generic [ref=e79]: Infrastructure as Code
+            - paragraph [ref=e80]: Treating infrastructure changes as controlled releases rather than manual setup work.
+            - generic [ref=e81]:
+              - generic [ref=e82]: Terraform
+              - generic [ref=e83]: CloudFormation
+              - generic [ref=e84]: Modular networking
+              - generic [ref=e85]: Reusable stacks
+              - generic [ref=e86]: Environment bootstrapping
+          - generic [ref=e87]:
+            - generic [ref=e88]: Containers and Delivery
+            - paragraph [ref=e89]: Shipping workloads through build, validation, image publication, and cluster deployment.
+            - generic [ref=e90]:
+              - generic [ref=e91]: Docker
+              - generic [ref=e92]: Kubernetes
+              - generic [ref=e93]: Jenkins
+              - generic [ref=e94]: GitHub Actions
+              - generic [ref=e95]: Helm
+              - generic [ref=e96]: Amazon ECR
+              - generic [ref=e97]: ALB
+          - generic [ref=e98]:
+            - generic [ref=e99]: Observability and Operations
+            - paragraph [ref=e100]: Giving systems enough context to detect, explain, and respond to runtime change.
+            - generic [ref=e101]:
+              - generic [ref=e102]: Prometheus
+              - generic [ref=e103]: Grafana
+              - generic [ref=e104]: Loki
+              - generic [ref=e105]: Ganglia
+              - generic [ref=e106]: Nagios
+              - generic [ref=e107]: Log pipelines
+              - generic [ref=e108]: Runbook-driven ops
+          - generic [ref=e109]:
+            - generic [ref=e110]: Security and Linux
+            - paragraph [ref=e111]: Hardening the operating layer so platform automation is fast without being loose.
+            - generic [ref=e112]:
+              - generic [ref=e113]: Ubuntu
+              - generic [ref=e114]: Rocky Linux
+              - generic [ref=e115]: SSH controls
+              - generic [ref=e116]: Fail2Ban
+              - generic [ref=e117]: UFW
+              - generic [ref=e118]: RBAC
+              - generic [ref=e119]: Storage management
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]: Experience
+          - heading "Operating at the boundary between scale, automation, and runtime trust." [level=2] [ref=e126]
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]: Sep 2025 - Present
+              - heading "Associate DevOps Engineer" [level=3] [ref=e132]
+              - generic [ref=e133]: ASCP GPUonCLOUD Pvt. Ltd. / Pune, India
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - generic [ref=e136]: "5"
+                - generic [ref=e137]: CloudFormation stacks
+              - generic [ref=e138]:
+                - generic [ref=e139]: "6"
+                - generic [ref=e140]: VPC subnets across 3 AZs
+              - generic [ref=e141]:
+                - generic [ref=e142]: "1000"
+                - generic [ref=e143]: Max cluster nodes
+              - generic [ref=e144]:
+                - generic [ref=e145]: "14"
+                - generic [ref=e146]: Services behind managed firewall rules
+          - generic [ref=e147]:
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - generic [ref=e150]: Elastic HPC platform delivery
+                - generic [ref=e151]: AWS PCS / SLURM / Terraform / CloudFormation
+              - generic [ref=e152]:
+                - generic [ref=e155]: Architected a production-ready AWS PCS + SLURM platform across multiple infrastructure stacks to remove manual cluster setup.
+                - generic [ref=e158]: Built modular Terraform for multi-AZ networking, NAT, routing, and service endpoints to support queue-based compute growth.
+                - generic [ref=e161]: Engineered queue-driven compute node scaling from 0 to 1000 nodes to align spend with active HPC demand.
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - generic [ref=e164]: Secure operations and observability
+                - generic [ref=e165]: Ubuntu / Bash / Prometheus / Grafana / Loki / UFW / Fail2Ban
+              - generic [ref=e166]:
+                - generic [ref=e169]: Hardened Linux access paths with SSH controls and Fail2Ban to block automated brute-force attempts quickly and consistently.
+                - generic [ref=e172]: Developed config-driven firewall automation for internal platform services including Prometheus, Grafana, Loki, and SSH.
+                - generic [ref=e175]: Configured dashboards and log pipelines that gave production teams live infrastructure visibility instead of delayed troubleshooting.
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - generic [ref=e181]: Case studies
+          - heading "Projects that map directly to the platform story." [level=2] [ref=e182]
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]: Workstream / 2025 - 2026
+              - heading "Elastic HPC Cluster on AWS PCS" [level=3] [ref=e187]
+              - paragraph [ref=e188]: A cloud-native HPC environment designed for scheduler-driven growth, repeatable networking, and operator visibility.
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - generic [ref=e191]: Outcomes
+                - generic [ref=e192]:
+                  - generic [ref=e195]: Scaled compute capacity from 0 -> 1000 nodes based on SLURM queue demand.
+                  - generic [ref=e198]: Distributed infrastructure responsibility between Terraform networking and CloudFormation-managed service layers.
+                  - generic [ref=e201]: Focused on operational cost control by provisioning only when jobs needed the fleet.
+              - generic [ref=e202]:
+                - generic [ref=e203]:
+                  - generic [ref=e204]: Architecture
+                  - generic [ref=e205]:
+                    - generic [ref=e206]: AWS PCS control plane and SLURM scheduling
+                    - generic [ref=e207]: Terraform-managed VPC with six subnets across three AZs
+                    - generic [ref=e208]: Security groups, endpoints, and layered network boundaries
+                    - generic [ref=e209]: Observability hooks for live cluster health
+                - generic [ref=e210]:
+                  - generic [ref=e211]: Stack
+                  - generic [ref=e212]:
+                    - generic [ref=e213]: AWS PCS
+                    - generic [ref=e214]: SLURM
+                    - generic [ref=e215]: Terraform
+                    - generic [ref=e216]: CloudFormation
+                    - generic [ref=e217]: VPC
+                    - generic [ref=e218]: Autoscaling
+          - generic [ref=e219]:
+            - generic [ref=e220]:
+              - generic [ref=e221]: Project / 2026
+              - heading "Jenkins CI/CD Pipeline on Amazon EKS" [level=3] [ref=e222]
+              - paragraph [ref=e223]: An end-to-end delivery path that moved source changes from validation to image publication and Kubernetes deployment.
+              - link "Open repository" [ref=e224] [cursor=pointer]:
+                - /url: https://github.com/abhijitkadam1706/Ecc-Project-
+                - text: Open repository
+                - img [ref=e225]
+            - generic [ref=e228]:
+              - generic [ref=e229]:
+                - generic [ref=e230]: Outcomes
+                - generic [ref=e231]:
+                  - generic [ref=e234]: Automated compile, test, code quality scanning, image build, and EKS deployment in one release path.
+                  - generic [ref=e237]: Provisioned supporting AWS networking and ingress foundations for a production-like Kubernetes environment.
+                  - generic [ref=e240]: Connected the pipeline to registry, cluster, and monitoring concerns instead of treating deployment as the final step.
+              - generic [ref=e241]:
+                - generic [ref=e242]:
+                  - generic [ref=e243]: Architecture
+                  - generic [ref=e244]:
+                    - generic [ref=e245]: Jenkins pipeline orchestration
+                    - generic [ref=e246]: SonarQube validation and Maven build stages
+                    - generic [ref=e247]: Docker build and Amazon ECR publication
+                    - generic [ref=e248]: kubectl deployment to Amazon EKS with ALB ingress
+                - generic [ref=e249]:
+                  - generic [ref=e250]: Stack
+                  - generic [ref=e251]:
+                    - generic [ref=e252]: Jenkins
+                    - generic [ref=e253]: Docker
+                    - generic [ref=e254]: Amazon EKS
+                    - generic [ref=e255]: Amazon ECR
+                    - generic [ref=e256]: Helm
+                    - generic [ref=e257]: ALB
+                    - generic [ref=e258]: SonarQube
+          - generic [ref=e259]:
+            - generic [ref=e260]:
+              - generic [ref=e261]: Project / 2025
+              - heading "Containerized HPC Cluster on Rocky Linux" [level=3] [ref=e262]
+              - paragraph [ref=e263]: A container-oriented HPC environment built as a modern replacement path for legacy CentOS-based cluster operations.
+              - link "Open repository" [ref=e264] [cursor=pointer]:
+                - /url: https://github.com/abhijitkadam1706/HPCSA_Project
+                - text: Open repository
+                - img [ref=e265]
+            - generic [ref=e268]:
+              - generic [ref=e269]:
+                - generic [ref=e270]: Outcomes
+                - generic [ref=e271]:
+                  - generic [ref=e274]: Provisioned multi-node compute infrastructure for HPC experimentation and scheduler-driven execution.
+                  - generic [ref=e277]: Integrated SLURM for workload scheduling and Ganglia for cluster telemetry.
+                  - generic [ref=e280]: Used the project to validate platform migration away from end-of-life operating system assumptions.
+              - generic [ref=e281]:
+                - generic [ref=e282]:
+                  - generic [ref=e283]: Architecture
+                  - generic [ref=e284]:
+                    - generic [ref=e285]: Rocky Linux 8.8 base image and cluster nodes
+                    - generic [ref=e286]: Warewulf provisioning workflow
+                    - generic [ref=e287]: SLURM queue scheduling
+                    - generic [ref=e288]: Ganglia monitoring for CPU, memory, and network visibility
+                - generic [ref=e289]:
+                  - generic [ref=e290]: Stack
+                  - generic [ref=e291]:
+                    - generic [ref=e292]: Rocky Linux
+                    - generic [ref=e293]: Warewulf
+                    - generic [ref=e294]: SLURM
+                    - generic [ref=e295]: Ganglia
+                    - generic [ref=e296]: Linux cluster administration
+      - generic [ref=e300]:
+        - generic [ref=e301]:
+          - generic [ref=e302]: Contact
+          - heading "Ready for the next platform challenge." [level=2] [ref=e303]
+          - paragraph [ref=e304]: Open to associate DevOps, cloud platform, and infrastructure engineering roles.
+          - paragraph [ref=e305]: If the role needs someone who can reason about cluster growth, delivery automation, observability, and Linux operations together, I am interested in the conversation.
+          - link "Start the conversation" [ref=e306] [cursor=pointer]:
+            - /url: mailto:kadamabhijit1706@gmail.com
+        - generic [ref=e307]:
+          - link "kadamabhijit1706@gmail.com" [ref=e308] [cursor=pointer]:
+            - /url: mailto:kadamabhijit1706@gmail.com
+            - img [ref=e309]
+            - generic [ref=e312]: kadamabhijit1706@gmail.com
+          - generic [ref=e313]:
+            - img [ref=e314]
+            - generic [ref=e316]: +91 8379836180
+          - generic [ref=e317]:
+            - img [ref=e318]
+            - generic [ref=e321]: Pune, India
+          - generic [ref=e322]:
+            - link "GitHub" [ref=e323] [cursor=pointer]:
+              - /url: https://github.com/abhijitkadam1706
+              - img [ref=e324]
+              - text: GitHub
+            - link "LinkedIn" [ref=e327] [cursor=pointer]:
+              - /url: https://linkedin.com/in/abhijit-kadam-006505149
+              - img [ref=e328]
+              - text: LinkedIn

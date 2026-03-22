@@ -6,7 +6,7 @@ export const springConfig = {
 };
 
 export const viewportOnce = {
-  once: true,
+  once: false,
   amount: 0.2,
 };
 

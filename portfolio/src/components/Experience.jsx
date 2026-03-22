@@ -1,12 +1,19 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll } from "framer-motion";
 import { sectionItem, staggerContainer, viewportOnce } from "../motion/animations";
 
 const MotionSection = motion.section;
 const MotionDiv = motion.div;
 
 const Experience = ({ entries }) => {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"],
+  });
+
   return (
-    <MotionSection id="experience" className="border-t border-white/10 px-5 py-24 sm:px-6 lg:px-8">
+    <MotionSection id="experience" className="scroll-mt-24 border-t border-white/10 px-5 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <MotionDiv
           variants={staggerContainer}
@@ -15,7 +22,7 @@ const Experience = ({ entries }) => {
           viewport={viewportOnce}
         >
           <MotionDiv variants={sectionItem} className="grid gap-12 lg:grid-cols-[0.35fr_1fr]">
-            <div>
+            <div className="lg:sticky lg:top-32 h-fit">
               <div className="text-xs uppercase tracking-[0.34em] text-[#ffb8b2]">
                 Experience
               </div>
@@ -24,7 +31,16 @@ const Experience = ({ entries }) => {
               </h2>
             </div>
 
-            <div className="space-y-12">
+            <div ref={containerRef} className="relative space-y-12 pl-0 lg:pl-10">
+              {/* Static Background Line */}
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/5 hidden lg:block rounded-full" />
+              
+              {/* Dynamic Scroll-filled Line */}
+              <motion.div 
+                style={{ scaleY: scrollYProgress }}
+                className="absolute left-0 top-0 bottom-0 w-[2px] origin-top bg-gradient-to-b from-[#ff8d86] via-[#9093ff] to-[#ff8d86] hidden lg:block rounded-full shadow-[0_0_20px_rgba(144,147,255,0.6)]" 
+              />
+              
               {entries.map((entry) => (
                 <div key={`${entry.company}-${entry.role}`} className="border-t border-white/10 pt-8">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

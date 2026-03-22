@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Preload } from "@react-three/drei";
 import * as THREE from "three";
 import useViewportMode from "../hooks/useViewportMode";
 import ClusterVisualizer from "./ClusterVisualizer";
 import ParticleBackground from "./ParticleBackground";
+import { TechStackVisualizer } from "./TechStackVisualizer";
 
 const CameraRig = ({ reducedMotion }) => {
   const target = new THREE.Vector3();
@@ -29,7 +29,7 @@ const CanvasRoot = ({ clusterProfile }) => {
 
   const particleCount = prefersReducedMotion ? 600 : isMobile ? 900 : isTablet ? 1500 : 2200;
   const nodeCount = prefersReducedMotion ? 18 : isMobile ? 22 : isTablet ? 28 : clusterProfile.totalNodes;
-  const clusterOffset = isTablet ? [0, 0.6, 0] : [4.9, 0.15, 0];
+  const clusterOffset = isTablet ? [0, 0.6, 0] : [7.5, -0.5, -5];
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 bg-[#080e1a]">
@@ -50,9 +50,8 @@ const CanvasRoot = ({ clusterProfile }) => {
           <group position={clusterOffset}>
             <ClusterVisualizer nodeCount={nodeCount} reducedMotion={prefersReducedMotion} />
           </group>
+          {!prefersReducedMotion && <TechStackVisualizer />}
         </Suspense>
-
-        <Preload all />
       </Canvas>
     </div>
   );
