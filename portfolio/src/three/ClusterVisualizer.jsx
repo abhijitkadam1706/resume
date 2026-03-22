@@ -136,15 +136,18 @@ const ClusterVisualizer = ({ nodeCount, reducedMotion }) => {
   return (
     <group ref={groupRef}>
       <instancedMesh ref={meshRef} args={[null, null, nodeCount]}>
-        <boxGeometry args={[0.28, 0.28, 0.28]}>
+        <boxGeometry args={[0.45, 0.45, 0.45]}>
           <instancedBufferAttribute attach="attributes-color" args={[colors, 3]} />
         </boxGeometry>
         <meshStandardMaterial
           vertexColors
-          roughness={0.18}
-          metalness={0.86}
+          roughness={0.2}
+          metalness={0.8}
           emissive="#ffffff"
-          emissiveIntensity={1.35}
+          emissiveIntensity={0.8}
+          transparent={true}
+          opacity={0.25}
+          depthWrite={false}
           toneMapped={false}
         />
       </instancedMesh>

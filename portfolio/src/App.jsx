@@ -69,7 +69,7 @@ function App() {
                   />
                 </div>
 
-                <div className="relative z-20 border-t border-white/10 bg-[#080e1a]/86 backdrop-blur-xl">
+                <div className="relative z-20 border-t border-white/10 bg-transparent">
                   <About profile={profile} capabilityGroups={capabilityGroups} />
                   <Experience entries={experienceEntries} />
                   <Projects projects={projectStudies} />
