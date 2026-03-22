@@ -5,19 +5,19 @@ import {
   Tag, Rocket, Settings2, Activity 
 } from "lucide-react";
 
-// DevOps Stages mapped accurately to the SVG Lemniscate of Bernoulli, mapped with precise 2D rotation angles
+// DevOps Stages mapped accurately to the SVG Lemniscate of Bernoulli
 const stagesData = [
   // OPS LOOP (Right Side) - Path offset 0.0 to 0.5
-  { id: "release", label: "Release", icon: Tag, pos: { left: "57%", top: "42%" }, rotate: "-45deg", offset: 0.05, isDev: false },
-  { id: "deploy", label: "Deploy", icon: Rocket, pos: { left: "75.6%", top: "18%" }, rotate: "0deg", offset: 0.125, isDev: false },
-  { id: "operate", label: "Operate", icon: Settings2, pos: { left: "93%", top: "50%" }, rotate: "90deg", offset: 0.250, isDev: false },
-  { id: "monitor", label: "Monitor", icon: Activity, pos: { left: "75.6%", top: "82%" }, rotate: "0deg", offset: 0.375, isDev: false },
+  { id: "release", label: "Release", icon: Tag, pos: { left: "57%", top: "42%" }, offset: 0.05, isDev: false },
+  { id: "deploy", label: "Deploy", icon: Rocket, pos: { left: "75.6%", top: "18%" }, offset: 0.125, isDev: false },
+  { id: "operate", label: "Operate", icon: Settings2, pos: { left: "93%", top: "50%" }, offset: 0.250, isDev: false },
+  { id: "monitor", label: "Monitor", icon: Activity, pos: { left: "75.6%", top: "82%" }, offset: 0.375, isDev: false },
 
   // DEV LOOP (Left Side) - Path offset 0.5 to 1.0
-  { id: "plan", label: "Plan", icon: FileCode2, pos: { left: "43%", top: "42%" }, rotate: "-45deg", offset: 0.55, isDev: true },
-  { id: "code", label: "Code", icon: Code2, pos: { left: "24.4%", top: "18%" }, rotate: "0deg", offset: 0.625, isDev: true },
-  { id: "build", label: "Build", icon: Hammer, pos: { left: "7%", top: "50%" }, rotate: "-90deg", offset: 0.750, isDev: true },
-  { id: "test", label: "Test", icon: FlaskConical, pos: { left: "24.4%", top: "82%" }, rotate: "0deg", offset: 0.875, isDev: true },
+  { id: "plan", label: "Plan", icon: FileCode2, pos: { left: "43%", top: "42%" }, offset: 0.55, isDev: true },
+  { id: "code", label: "Code", icon: Code2, pos: { left: "24.4%", top: "18%" }, offset: 0.625, isDev: true },
+  { id: "build", label: "Build", icon: Hammer, pos: { left: "7%", top: "50%" }, offset: 0.750, isDev: true },
+  { id: "test", label: "Test", icon: FlaskConical, pos: { left: "24.4%", top: "82%" }, offset: 0.875, isDev: true },
 ];
 
 const PipelineEngine = () => {
@@ -46,27 +46,15 @@ const PipelineEngine = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
-      className="w-full flex justify-center py-16 px-4 md:px-8"
+      className="w-full flex justify-center py-24 px-4 md:px-8"
     >
-      <div className="relative w-full max-w-[750px] aspect-[2/1] bg-[#080e1a]/40 backdrop-blur-md border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.5)] rounded-3xl flex items-center justify-center p-8">
+      <div className="relative w-full max-w-[1200px] aspect-[2/1] bg-[#080e1a]/40 backdrop-blur-md border border-white/5 shadow-[0_0_80px_rgba(0,0,0,0.5)] rounded-3xl flex items-center justify-center p-8">
         
         {/* Core SVG Canvas */}
         <div className="relative w-full h-full text-center">
-          
-          {/* Centered Dev/Ops Typography positioned strictly inside the empty circles */}
-          <div className="absolute top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none flex flex-col items-center justify-center">
-            <span className="font-headline text-3xl md:text-5xl font-black text-white/90 drop-shadow-[0_0_10px_rgba(102,166,255,0.8)] tracking-tight">
-              Dev
-            </span>
-          </div>
-          <div className="absolute top-1/2 left-[75%] -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none flex flex-col items-center justify-center">
-            <span className="font-headline text-3xl md:text-5xl font-black text-white/90 drop-shadow-[0_0_10px_rgba(255,141,134,0.8)] tracking-tight">
-              Ops
-            </span>
-          </div>
 
           <svg
-            viewBox="-200 -100 400 200"
+            viewBox="-170 -90 340 180"
             className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-10"
           >
             <defs>
@@ -111,7 +99,7 @@ const PipelineEngine = () => {
               strokeLinecap="round"
               animate={{ pathLength: 0.05, pathOffset: progress }}
               transition={{ duration: 0, ease: "linear" }}
-              style={{ filter: "drop-shadow(0 0 6px #ffffff)" }}
+              style={{ filter: "drop-shadow(0 0 8px #ffffff)" }}
             />
           </svg>
 
@@ -131,13 +119,12 @@ const PipelineEngine = () => {
                 className="absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group z-20 origin-center"
                 style={{ 
                   left: stage.pos.left, 
-                  top: stage.pos.top,
-                  rotate: stage.rotate // Applying the exact rotation per stage
+                  top: stage.pos.top 
                 }}
               >
                 {/* Node Glass Pill */}
                 <div 
-                  className={`relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl border backdrop-blur-md transition-all duration-300 ${
+                  className={`relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-xl border backdrop-blur-md transition-all duration-300 ${
                     isActive 
                       ? (stage.isDev 
                           ? "bg-[#0b162c] border-[#66a6ff] shadow-[0_0_20px_#66a6ff]" 
@@ -148,7 +135,7 @@ const PipelineEngine = () => {
                   }`}
                 >
                   <Icon 
-                    className={`w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 ${
+                    className={`w-4 h-4 transition-colors duration-300 ${
                       isActive 
                         ? "#ffffff" 
                         : (stage.isDev ? "text-[#66a6ff]" : "text-[#ff8d86]")
@@ -158,7 +145,7 @@ const PipelineEngine = () => {
                 
                 {/* Node Label Title */}
                 <div 
-                  className={`absolute top-full mt-2 lg:mt-3 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[0.45rem] md:text-[0.6rem] font-bold uppercase tracking-[0.2em] border backdrop-blur-md transition-all duration-300 ${
+                  className={`absolute top-full mt-2 lg:mt-3 px-2 md:px-3 py-0.5 rounded-full text-[0.45rem] md:text-[0.55rem] font-bold uppercase tracking-[0.2em] border backdrop-blur-md transition-all duration-300 ${
                     isActive
                       ? (stage.isDev 
                           ? "bg-[#0b162c] border-[#66a6ff]/50 text-white shadow-[0_0_10px_rgba(102,166,255,0.5)]" 
