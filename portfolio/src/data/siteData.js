@@ -238,12 +238,14 @@ export const telemetryConfig = {
 };
 
 export const pipelineStages = [
-  { id: "source", label: "Source" },
-  { id: "validate", label: "Validate" },
+  { id: "plan", label: "Plan" },
+  { id: "code", label: "Code" },
   { id: "build", label: "Build" },
-  { id: "scan", label: "Scan" },
+  { id: "test", label: "Test" },
+  { id: "release", label: "Release" },
   { id: "deploy", label: "Deploy" },
-  { id: "observe", label: "Observe" },
+  { id: "operate", label: "Operate" },
+  { id: "monitor", label: "Monitor" },
 ];
 
 export const bootSequence = [
