@@ -5,19 +5,19 @@ import {
   Tag, Rocket, Settings2, Activity 
 } from "lucide-react";
 
-// DevOps Stages mapped accurately to the SVG Lemniscate of Bernoulli
+// DevOps Stages mapped accurately to the SVG Lemniscate of Bernoulli, mapped with precise 2D rotation angles
 const stagesData = [
   // OPS LOOP (Right Side) - Path offset 0.0 to 0.5
-  { id: "release", label: "Release", icon: Tag, pos: { left: "60%", top: "31%" }, offset: 0.05, isDev: false },
-  { id: "deploy", label: "Deploy", icon: Rocket, pos: { left: "75.6%", top: "20%" }, offset: 0.125, isDev: false },
-  { id: "operate", label: "Operate", icon: Settings2, pos: { left: "90%", top: "50%" }, offset: 0.250, isDev: false },
-  { id: "monitor", label: "Monitor", icon: Activity, pos: { left: "75.6%", top: "80%" }, offset: 0.375, isDev: false },
+  { id: "release", label: "Release", icon: Tag, pos: { left: "57%", top: "42%" }, rotate: "-45deg", offset: 0.05, isDev: false },
+  { id: "deploy", label: "Deploy", icon: Rocket, pos: { left: "75.6%", top: "18%" }, rotate: "0deg", offset: 0.125, isDev: false },
+  { id: "operate", label: "Operate", icon: Settings2, pos: { left: "93%", top: "50%" }, rotate: "90deg", offset: 0.250, isDev: false },
+  { id: "monitor", label: "Monitor", icon: Activity, pos: { left: "75.6%", top: "82%" }, rotate: "0deg", offset: 0.375, isDev: false },
 
   // DEV LOOP (Left Side) - Path offset 0.5 to 1.0
-  { id: "plan", label: "Plan", icon: FileCode2, pos: { left: "40%", top: "31%" }, offset: 0.55, isDev: true },
-  { id: "code", label: "Code", icon: Code2, pos: { left: "24.4%", top: "20%" }, offset: 0.625, isDev: true },
-  { id: "build", label: "Build", icon: Hammer, pos: { left: "10%", top: "50%" }, offset: 0.750, isDev: true },
-  { id: "test", label: "Test", icon: FlaskConical, pos: { left: "24.4%", top: "80%" }, offset: 0.875, isDev: true },
+  { id: "plan", label: "Plan", icon: FileCode2, pos: { left: "43%", top: "42%" }, rotate: "-45deg", offset: 0.55, isDev: true },
+  { id: "code", label: "Code", icon: Code2, pos: { left: "24.4%", top: "18%" }, rotate: "0deg", offset: 0.625, isDev: true },
+  { id: "build", label: "Build", icon: Hammer, pos: { left: "7%", top: "50%" }, rotate: "-90deg", offset: 0.750, isDev: true },
+  { id: "test", label: "Test", icon: FlaskConical, pos: { left: "24.4%", top: "82%" }, rotate: "0deg", offset: 0.875, isDev: true },
 ];
 
 const PipelineEngine = () => {
@@ -128,8 +128,12 @@ const PipelineEngine = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: isActive ? 1.15 : 1 }}
                 transition={{ duration: 0.2 }}
-                className="absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group z-20"
-                style={{ left: stage.pos.left, top: stage.pos.top }}
+                className="absolute flex flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 group z-20 origin-center"
+                style={{ 
+                  left: stage.pos.left, 
+                  top: stage.pos.top,
+                  rotate: stage.rotate // Applying the exact rotation per stage
+                }}
               >
                 {/* Node Glass Pill */}
                 <div 
